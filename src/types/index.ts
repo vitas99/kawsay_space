@@ -19,7 +19,7 @@ export interface Mission {
 
 // Tipos para formularios
 export interface LoginFormData {
-  cadetName: string;
+  username: string;
   password: string;
 }
 
