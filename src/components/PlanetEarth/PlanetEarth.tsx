@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import './PlanetEarth.css';
+import React, { useEffect, useState } from "react";
+import "./PlanetEarth.css";
 
 interface PlanetEarthProps {
   size?: number;
@@ -12,31 +12,32 @@ interface PlanetEarthProps {
 
 const PlanetEarth: React.FC<PlanetEarthProps> = ({
   size = 200,
-  rotationSpeed = 30, // seconds per full rotation
+  rotationSpeed = 30, // segundos por rotación completa
   showAtmosphere = true,
   showClouds = true,
   showRocket = true,
-  className = ''
+  className = "",
 }) => {
   const [rotation, setRotation] = useState(0);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setRotation(prev => (prev + 1) % 360);
-    }, (rotationSpeed * 1000) / 360); // Calculate interval for smooth rotation
+      setRotation((prev) => (prev + 1) % 360);
+    }, (rotationSpeed * 1000) / 360);
 
     return () => clearInterval(interval);
   }, [rotationSpeed]);
 
-  const planetStyle = {
-    width: `${size}px`,
-    height: `${size}px`,
-    transform: `rotateY(${rotation}deg)`,
-    animationDuration: `${rotationSpeed}s`
-  };
-
   return (
-    <div className={`planet-earth ${className}`} style={planetStyle}>
+    <div
+      className={`planet-earth ${className}`}
+      style={{
+        // solo definimos variables CSS, no estilos directos
+        ["--planet-size" as any]: `${size}px`,
+        ["--planet-rotation" as any]: `${rotation}deg`,
+        ["--planet-rotation-speed" as any]: `${rotationSpeed}s`,
+      }}
+    >
       {showAtmosphere && <div className="planet-earth__atmosphere" />}
       <div className="planet-earth__body">
         <div className="planet-earth__surface" />
@@ -57,4 +58,4 @@ const PlanetEarth: React.FC<PlanetEarthProps> = ({
   );
 };
 
-export default PlanetEarth; // Asegúrate de que esta línea esté presente
+export default PlanetEarth;
