@@ -3,48 +3,37 @@ import React from 'react';
 const BackgroundScene: React.FC = () => {
   // Sistema de estrellas más sofisticado
   const generateStarField = () => {
-    const layers = [
-      { count: 300, minSize: 0.5, maxSize: 1, speed: 0.3, brightness: 0.4 },
-      { count: 150, minSize: 1, maxSize: 2, speed: 0.5, brightness: 0.6 },
-      { count: 80, minSize: 1.5, maxSize: 3, speed: 0.8, brightness: 0.8 },
-      { count: 30, minSize: 2, maxSize: 4, speed: 1.2, brightness: 1 }
-    ];
+    return [...Array(300)].map((_, i) => {
+      const left = Math.random() * 100;
+      const top = Math.random() * 70; // Matches .stars height: 70%
+      const size = i % 5 === 4 ? 1.5 : i % 3 === 0 ? 4.5 : 3; // 1.5x of 1px, 3px, 2px
+      const background = i % 5 === 4 ? '#ffd700' : i % 3 === 0 ? '#87ceeb' : 'white';
+      const animationDelay = Math.random() * 2;
 
-    return layers.map((layer, layerIndex) => {
-      return [...Array(layer.count)].map((_, i) => {
-        const left = Math.random() * 100;
-        const top = Math.random() * 45;
-        const size = layer.minSize + Math.random() * (layer.maxSize - layer.minSize);
-        const brightness = layer.brightness * (0.7 + Math.random() * 0.3);
-        const twinkleDelay = Math.random() * 4;
-        const twinkleDuration = 2 + Math.random() * 3;
-        
-        return (
-          <div
-            key={`star-${layerIndex}-${i}`}
-            className={`star layer-${layerIndex}`}
-            style={{
-              left: `${left}%`,
-              top: `${top}%`,
-              width: `${size}px`,
-              height: `${size}px`,
-              opacity: brightness,
-              animationDelay: `${twinkleDelay}s`,
-              animationDuration: `${twinkleDuration}s`
-            }}
-          />
-        );
-      });
-    }).flat();
+      return (
+        <div
+          key={`star-${i}`}
+          className="star"
+          style={{
+            left: `${left}%`,
+            top: `${top}%`,
+            width: `${size}px`,
+            height: `${size}px`,
+            background,
+            animationDelay: `${animationDelay}s`
+          }}
+        />
+      );
+    });
   };
 
   // Partículas para el rastro del caballito
   const wakeParticles = [...Array(40)].map((_, i) => {
     const delay = i * 0.06;
-    const offsetX = -i * 10 - Math.sin(i * 0.4) * 12;
-    const offsetY = Math.sin(i * 0.6) * 18 + Math.cos(i * 0.3) * 10;
-    const scale = 1 - (i * 0.02);
-    
+    const offsetX = -i * 15 - Math.sin(i * 0.4) * 18; // 1.5x 10, 12
+    const offsetY = Math.sin(i * 0.6) * 27 + Math.cos(i * 0.3) * 15; // 1.5x 18, 10
+    const scale = 1 - i * 0.02;
+
     return (
       <div
         key={i}
@@ -66,7 +55,7 @@ const BackgroundScene: React.FC = () => {
     const scale = 0.6 + Math.random() * 0.8;
     const duration = 40 + Math.random() * 20;
     const delay = Math.random() * 10;
-    
+
     return (
       <div
         key={i}
@@ -84,7 +73,6 @@ const BackgroundScene: React.FC = () => {
 
   // Constelaciones incas
   const incaConstellations = [
-    // Chakana (Cruz del Sur)
     {
       name: 'chakana',
       stars: [
@@ -98,7 +86,6 @@ const BackgroundScene: React.FC = () => {
         [0, 1], [0, 2], [0, 3], [1, 3], [2, 3], [0, 4], [1, 4], [2, 4], [3, 4]
       ]
     },
-    // Llama (constelación oscura del Saco de Carbón)
     {
       name: 'llama',
       stars: [
@@ -113,7 +100,6 @@ const BackgroundScene: React.FC = () => {
         [0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 0]
       ]
     },
-    // Cóndor (parte de la Vía Láctea)
     {
       name: 'condor',
       stars: [
@@ -128,7 +114,6 @@ const BackgroundScene: React.FC = () => {
         [0, 1], [0, 2], [0, 3], [3, 4], [3, 5], [1, 4], [2, 5]
       ]
     },
-    // Partridge (Perdiz)
     {
       name: 'partridge',
       stars: [
@@ -142,7 +127,6 @@ const BackgroundScene: React.FC = () => {
         [0, 1], [1, 2], [2, 3], [3, 4], [4, 0]
       ]
     },
-    // Serpiente (parte de la Vía Láctea)
     {
       name: 'serpent',
       stars: [
@@ -160,7 +144,7 @@ const BackgroundScene: React.FC = () => {
   ];
 
   // Generar estrellas de constelaciones
-  const constellationElements = incaConstellations.map((constellation, constIndex) => {
+  const constellationElements = incaConstellations.map((constellation) => {
     const stars = constellation.stars.map((star, starIndex) => (
       <div
         key={`${constellation.name}-star-${starIndex}`}
@@ -178,12 +162,12 @@ const BackgroundScene: React.FC = () => {
       const [start, end] = connection;
       const startStar = constellation.stars[start];
       const endStar = constellation.stars[end];
-      
+
       const deltaX = endStar.x - startStar.x;
       const deltaY = endStar.y - startStar.y;
       const length = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
       const angle = Math.atan2(deltaY, deltaX) * 180 / Math.PI;
-      
+
       return (
         <div
           key={`${constellation.name}-line-${lineIndex}`}
@@ -207,6 +191,7 @@ const BackgroundScene: React.FC = () => {
     );
   });
 
+  // Call generateStarField to create the stars array
   const stars = generateStarField();
 
   return (
@@ -218,54 +203,130 @@ const BackgroundScene: React.FC = () => {
           left: 0;
           width: 100vw;
           height: 100vh;
-          background: 
-            radial-gradient(ellipse 80% 60% at 50% 100%, rgba(255, 140, 0, 0.25) 0%, rgba(255, 69, 0, 0.15) 40%, transparent 70%),
-            linear-gradient(180deg, 
-              #000428 0%,
-              #004e92 8%,
-              #1565c0 16%,
-              #1976d2 24%,
-              #2196f3 32%,
-              #42a5f5 40%,
-              #64b5f6 48%,
-              #90caf9 56%,
-              #bbdefb 64%,
-              #e3f2fd 72%,
-              #fff3e0 80%,
-              #ffe0b2 88%,
-              #ffcc02 94%,
-              #ffc107 100%
-            );
+          background: linear-gradient(
+            to bottom,
+            #0d1b2a 0%,
+            #1b2951 30%,
+            #415a77 60%,
+            #778da9 80%,
+            #e0e1dd 100%
+          );
           overflow: hidden;
           z-index: -1;
         }
 
-        /* Sistema avanzado de estrellas */
+        /* Estrellas */
+        .stars {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 70%;
+          z-index: 2;
+        }
+
         .star {
           position: absolute;
-          background: radial-gradient(circle, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0.8) 40%, transparent 100%);
           border-radius: 50%;
-          animation: stellar-twinkle 3s ease-in-out infinite alternate;
+          animation: twinkle 2s infinite alternate;
         }
 
-        .layer-0 .star {
-          background: radial-gradient(circle, rgba(255, 255, 255, 0.9) 0%, transparent 70%);
-          box-shadow: 0 0 2px rgba(255, 255, 255, 0.3);
+        @keyframes twinkle {
+          0% { opacity: 0.3; }
+          100% { opacity: 1; }
         }
 
-        .layer-1 .star {
-          background: radial-gradient(circle, rgba(173, 216, 230, 1) 0%, rgba(173, 216, 230, 0.6) 50%, transparent 100%);
-          box-shadow: 0 0 4px rgba(173, 216, 230, 0.4);
+        /* Montañas */
+        .mountains {
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          width: 100%;
+          height: 60%; /* 1.5x 40% */
+          z-index: 1;
         }
 
-        .layer-2 .star {
-          background: radial-gradient(circle, rgba(255, 215, 0, 1) 0%, rgba(255, 215, 0, 0.7) 40%, transparent 100%);
-          box-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
+        .mountain {
+          position: absolute;
+          bottom: 0;
         }
 
-        .layer-3 .star {
-          background: radial-gradient(circle, rgba(255, 182, 193, 1) 0%, rgba(255, 182, 193, 0.8) 30%, transparent 100%);
-          box-shadow: 0 0 12px rgba(255, 182, 193, 0.6);
+        .mountain-1 {
+          left: 0;
+          width: 0;
+          height: 0;
+          border-left: 300px solid transparent; /* 1.5x 200px */
+          border-right: 450px solid transparent; /* 1.5x 300px */
+          border-bottom: 420px solid rgba(25, 25, 112, 0.8); /* 1.5x 280px */
+        }
+
+        .mountain-2 {
+          left: 30%;
+          width: 0;
+          height: 0;
+          border-left: 270px solid transparent; /* 1.5x 180px */
+          border-right: 375px solid transparent; /* 1.5x 250px */
+          border-bottom: 480px solid rgba(25, 25, 112, 0.9); /* 1.5x 320px */
+        }
+
+        .mountain-3 {
+          right: 0;
+          width: 0;
+          height: 0;
+          border-left: 330px solid transparent; /* 1.5x 220px */
+          border-right: 270px solid transparent; /* 1.5x 180px */
+          border-bottom: 450px solid rgba(25, 25, 112, 0.7); /* 1.5x 300px */
+        }
+
+        /* Gradiente del horizonte */
+        .horizon-gradient {
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          width: 100%;
+          height: 300px; /* 1.5x 200px */
+          background: linear-gradient(
+            to top,
+            rgba(255, 165, 0, 0.3) 0%,
+            rgba(255, 69, 0, 0.2) 30%,
+            rgba(147, 0, 211, 0.1) 70%,
+            transparent 100%
+          );
+          z-index: 0;
+        }
+
+        /* Nubes atmosféricas */
+        .cloud {
+          position: absolute;
+          width: 120px;
+          height: 40px;
+          background: rgba(255, 255, 255, 0.1);
+          border-radius: 40px;
+          animation: cloud-drift 60s linear infinite;
+          filter: blur(1px);
+          z-index: 10;
+        }
+
+        .cloud::before {
+          content: '';
+          position: absolute;
+          top: -15px;
+          left: 20px;
+          width: 50px;
+          height: 50px;
+          background: rgba(255, 255, 255, 0.08);
+          border-radius: 50%;
+        }
+
+        .cloud::after {
+          content: '';
+          position: absolute;
+          top: -10px;
+          right: 15px;
+          width: 40px;
+          height: 40px;
+          background: rgba(255, 255, 255, 0.06);
+          border-radius: 50%;
         }
 
         /* Constelaciones incas */
@@ -301,7 +362,6 @@ const BackgroundScene: React.FC = () => {
           box-shadow: 0 0 4px rgba(255, 215, 0, 0.5);
         }
 
-        /* Chakana (Cruz del Sur) - La más sagrada */
         .chakana .constellation-star {
           background: radial-gradient(circle, rgba(255, 255, 255, 1) 0%, rgba(255, 215, 0, 0.9) 30%, rgba(255, 193, 7, 0.5) 100%);
           box-shadow: 
@@ -323,7 +383,6 @@ const BackgroundScene: React.FC = () => {
             0 0 12px rgba(255, 215, 0, 0.5);
         }
 
-        /* Llama - constelación del Saco de Carbón */
         .llama .constellation-star {
           background: radial-gradient(circle, rgba(160, 132, 92, 1) 0%, rgba(139, 111, 71, 0.8) 50%, rgba(101, 67, 33, 0.4) 100%);
           box-shadow: 
@@ -341,7 +400,6 @@ const BackgroundScene: React.FC = () => {
           box-shadow: 0 0 4px rgba(139, 111, 71, 0.4);
         }
 
-        /* Cóndor - ave sagrada */
         .condor .constellation-star {
           background: radial-gradient(circle, rgba(173, 216, 230, 1) 0%, rgba(135, 206, 235, 0.8) 40%, rgba(70, 130, 180, 0.4) 100%);
           box-shadow: 
@@ -359,7 +417,6 @@ const BackgroundScene: React.FC = () => {
           box-shadow: 0 0 5px rgba(135, 206, 235, 0.5);
         }
 
-        /* Perdiz */
         .partridge .constellation-star {
           background: radial-gradient(circle, rgba(255, 182, 193, 1) 0%, rgba(255, 160, 122, 0.8) 50%, rgba(205, 92, 92, 0.4) 100%);
           box-shadow: 
@@ -377,7 +434,6 @@ const BackgroundScene: React.FC = () => {
           box-shadow: 0 0 3px rgba(255, 160, 122, 0.4);
         }
 
-        /* Serpiente */
         .serpent .constellation-star {
           background: radial-gradient(circle, rgba(152, 251, 152, 1) 0%, rgba(144, 238, 144, 0.8) 40%, rgba(34, 139, 34, 0.4) 100%);
           box-shadow: 
@@ -431,12 +487,6 @@ const BackgroundScene: React.FC = () => {
           100% { opacity: 0.9; transform: scale(1.05) rotateZ(2deg); }
         }
 
-        @keyframes stellar-twinkle {
-          0% { opacity: 0.4; transform: scale(0.8) rotate(0deg); }
-          50% { opacity: 1; transform: scale(1.2) rotate(180deg); }
-          100% { opacity: 0.6; transform: scale(1) rotate(360deg); }
-        }
-
         /* Caballito de totora con cóndor */
         .totora-rider {
           position: absolute;
@@ -444,7 +494,7 @@ const BackgroundScene: React.FC = () => {
           right: 8%;
           animation: epic-journey 12s cubic-bezier(0.4, 0, 0.2, 1) infinite;
           z-index: 15;
-          filter: drop-shadow(0 0 25px rgba(255, 140, 0, 0.3));
+          filter: drop-shadow(0 0 37.5px rgba(255, 140, 0, 0.3));
         }
 
         .rider-container {
@@ -455,20 +505,19 @@ const BackgroundScene: React.FC = () => {
         /* Cóndor andino realista */
         .condor {
           position: absolute;
-          top: -45px;
-          left: 15px;
+          top: -67.5px;
+          left: 22.5px;
           z-index: 17;
           animation: condor-soaring 2s ease-in-out infinite;
           filter: 
-            drop-shadow(0 0 20px rgba(0, 0, 0, 0.6))
-            drop-shadow(0 0 40px rgba(139, 69, 19, 0.3));
+            drop-shadow(0 0 30px rgba(0, 0, 0, 0.6))
+            drop-shadow(0 0 60px rgba(139, 69, 19, 0.3));
           transform-origin: center;
         }
 
-        /* Cuerpo del cóndor */
         .condor-body {
-          width: 25px;
-          height: 40px;
+          width: 37.5px;
+          height: 60px;
           background: linear-gradient(180deg, 
             #1a1a1a 0%, 
             #2d2d2d 20%, 
@@ -478,49 +527,46 @@ const BackgroundScene: React.FC = () => {
           border-radius: 50% 50% 60% 60%;
           position: relative;
           box-shadow: 
-            0 0 15px rgba(0, 0, 0, 0.5),
-            inset 0 5px 10px rgba(255, 255, 255, 0.1);
+            0 0 22.5px rgba(0, 0, 0, 0.5),
+            inset 0 7.5px 15px rgba(255, 255, 255, 0.1);
         }
 
-        /* Cabeza del cóndor */
         .condor-head {
           position: absolute;
-          top: -12px;
+          top: -18px;
           left: 50%;
           transform: translateX(-50%);
-          width: 12px;
-          height: 15px;
+          width: 18px;
+          height: 22.5px;
           background: linear-gradient(180deg, 
             #ff6b47 0%, 
             #ff4757 40%, 
             #ff3742 100%
           );
           border-radius: 60% 60% 40% 40%;
-          box-shadow: 0 0 8px rgba(255, 71, 87, 0.4);
+          box-shadow: 0 0 12px rgba(255, 71, 87, 0.4);
         }
 
-        /* Pico del cóndor */
         .condor-beak {
           position: absolute;
-          top: 8px;
+          top: 12px;
           left: 50%;
           transform: translateX(-50%);
           width: 0;
           height: 0;
-          border-left: 3px solid transparent;
-          border-right: 3px solid transparent;
-          border-top: 8px solid #2c2c54;
-          filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
+          border-left: 4.5px solid transparent;
+          border-right: 4.5px solid transparent;
+          border-top: 12px solid #2c2c54;
+          filter: drop-shadow(0 1.5px 3px rgba(0, 0, 0, 0.3));
         }
 
-        /* Collar blanco característico */
         .condor-collar {
           position: absolute;
-          top: 5px;
+          top: 7.5px;
           left: 50%;
           transform: translateX(-50%);
-          width: 28px;
-          height: 8px;
+          width: 42px;
+          height: 12px;
           background: linear-gradient(180deg, 
             #ffffff 0%, 
             #f1f2f6 50%, 
@@ -528,17 +574,16 @@ const BackgroundScene: React.FC = () => {
           );
           border-radius: 50%;
           box-shadow: 
-            0 0 10px rgba(255, 255, 255, 0.6),
-            inset 0 2px 4px rgba(0, 0, 0, 0.1);
+            0 0 15px rgba(255, 255, 255, 0.6),
+            inset 0 3px 6px rgba(0, 0, 0, 0.1);
         }
 
-        /* Alas extendidas */
         .condor-wing-left {
           position: absolute;
-          top: 8px;
-          left: -45px;
-          width: 50px;
-          height: 20px;
+          top: 12px;
+          left: -67.5px;
+          width: 75px;
+          height: 30px;
           background: linear-gradient(45deg, 
             #1a1a1a 0%, 
             #2d2d2d 30%, 
@@ -549,16 +594,16 @@ const BackgroundScene: React.FC = () => {
           transform-origin: right center;
           animation: wing-flap-left 2s ease-in-out infinite;
           box-shadow: 
-            0 0 15px rgba(0, 0, 0, 0.4),
-            inset 0 3px 8px rgba(255, 255, 255, 0.05);
+            0 0 22.5px rgba(0, 0, 0, 0.4),
+            inset 0 4.5px 12px rgba(255, 255, 255, 0.05);
         }
 
         .condor-wing-right {
           position: absolute;
-          top: 8px;
-          right: -45px;
-          width: 50px;
-          height: 20px;
+          top: 12px;
+          right: -67.5px;
+          width: 75px;
+          height: 30px;
           background: linear-gradient(-45deg, 
             #1a1a1a 0%, 
             #2d2d2d 30%, 
@@ -569,65 +614,63 @@ const BackgroundScene: React.FC = () => {
           transform-origin: left center;
           animation: wing-flap-right 2s ease-in-out infinite;
           box-shadow: 
-            0 0 15px rgba(0, 0, 0, 0.4),
-            inset 0 3px 8px rgba(255, 255, 255, 0.05);
+            0 0 22.5px rgba(0, 0, 0, 0.4),
+            inset 0 4.5px 12px rgba(255, 255, 255, 0.05);
         }
 
-        /* Plumas primarias del ala */
         .wing-feathers-left {
           position: absolute;
-          top: 2px;
-          left: -8px;
-          width: 35px;
-          height: 3px;
+          top: 3px;
+          left: -12px;
+          width: 52.5px;
+          height: 4.5px;
           background: 
             repeating-linear-gradient(90deg, 
               #000000 0px, 
-              #1a1a1a 3px, 
-              #2d2d2d 6px, 
-              #1a1a1a 9px
+              #1a1a1a 4.5px, 
+              #2d2d2d 9px, 
+              #1a1a1a 13.5px
             );
-          border-radius: 2px;
+          border-radius: 3px;
           opacity: 0.8;
         }
 
         .wing-feathers-right {
           position: absolute;
-          top: 2px;
-          right: -8px;
-          width: 35px;
-          height: 3px;
+          top: 3px;
+          right: -12px;
+          width: 52.5px;
+          height: 4.5px;
           background: 
             repeating-linear-gradient(-90deg, 
               #000000 0px, 
-              #1a1a1a 3px, 
-              #2d2d2d 6px, 
-              #1a1a1a 9px
+              #1a1a1a 4.5px, 
+              #2d2d2d 9px, 
+              #1a1a1a 13.5px
             );
-          border-radius: 2px;
+          border-radius: 3px;
           opacity: 0.8;
         }
 
-        /* Cola del cóndor */
         .condor-tail {
           position: absolute;
-          bottom: -8px;
+          bottom: -12px;
           left: 50%;
           transform: translateX(-50%);
-          width: 20px;
-          height: 12px;
+          width: 30px;
+          height: 18px;
           background: linear-gradient(180deg, 
             #1a1a1a 0%, 
             #000000 100%
           );
           border-radius: 0 0 60% 60%;
-          box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.05);
+          box-shadow: inset 0 3px 6px rgba(255, 255, 255, 0.05);
         }
 
         /* Caballito de totora auténtico peruano */
         .totora-boat {
-          width: 130px;
-          height: 18px;
+          width: 195px;
+          height: 27px;
           position: relative;
           background: linear-gradient(to right, 
             #CD853F 0%,
@@ -641,39 +684,37 @@ const BackgroundScene: React.FC = () => {
             #DAA520 92%,
             #CD853F 100%
           );
-          border-radius: 0 60px 60px 0;
-          transform: perspective(80px) rotateX(8deg);
+          border-radius: 0 90px 90px 0;
+          transform: perspective(120px) rotateX(8deg);
           box-shadow: 
-            0 8px 25px rgba(205, 133, 63, 0.5),
-            0 4px 15px rgba(255, 215, 0, 0.3),
-            inset 0 3px 8px rgba(255, 248, 220, 0.4),
-            inset 0 -3px 8px rgba(205, 133, 63, 0.6);
-          border: 1px solid rgba(218, 165, 32, 0.8);
+            0 12px 37.5px rgba(205, 133, 63, 0.5),
+            0 6px 22.5px rgba(255, 215, 0, 0.3),
+            inset 0 4.5px 12px rgba(255, 248, 220, 0.4),
+            inset 0 -4.5px 12px rgba(205, 133, 63, 0.6);
+          border: 1.5px solid rgba(218, 165, 32, 0.8);
         }
 
-        /* Textura de juncos entrelazados realista */
         .totora-boat::before {
           content: '';
           position: absolute;
-          top: 1px;
-          left: 2px;
-          width: 126px;
-          height: 16px;
+          top: 1.5px;
+          left: 3px;
+          width: 189px;
+          height: 24px;
           background: 
             repeating-linear-gradient(90deg, 
               rgba(255, 215, 0, 0.9) 0px, 
-              rgba(255, 235, 59, 0.7) 1px, 
-              rgba(255, 248, 220, 0.5) 2px, 
-              rgba(255, 235, 59, 0.7) 3px, 
-              rgba(255, 215, 0, 0.9) 4px,
-              rgba(244, 164, 96, 0.3) 5px,
-              rgba(218, 165, 32, 0.4) 6px
+              rgba(255, 235, 59, 0.7) 1.5px, 
+              rgba(255, 248, 220, 0.5) 3px, 
+              rgba(255, 235, 59, 0.7) 4.5px, 
+              rgba(255, 215, 0, 0.9) 6px,
+              rgba(244, 164, 96, 0.3) 7.5px,
+              rgba(218, 165, 32, 0.4) 9px
             );
-          border-radius: 0 55px 55px 0;
+          border-radius: 0 82.5px 82.5px 0;
           opacity: 0.95;
         }
 
-        /* Patrón entrecruzado de fibras */
         .totora-boat::after {
           content: '';
           position: absolute;
@@ -684,32 +725,31 @@ const BackgroundScene: React.FC = () => {
           background: 
             repeating-linear-gradient(25deg, 
               transparent 0px, 
-              rgba(205, 133, 63, 0.2) 0.5px, 
-              transparent 1px, 
-              transparent 4px
+              rgba(205, 133, 63, 0.2) 0.75px, 
+              transparent 1.5px, 
+              transparent 6px
             ),
             repeating-linear-gradient(-25deg, 
               transparent 0px, 
-              rgba(255, 215, 0, 0.15) 0.5px, 
-              transparent 1px, 
-              transparent 4px
+              rgba(255, 215, 0, 0.15) 0.75px, 
+              transparent 1.5px, 
+              transparent 6px
             ),
             repeating-linear-gradient(90deg, 
               transparent 0px, 
-              rgba(244, 164, 96, 0.1) 1px, 
-              transparent 2px, 
-              transparent 5px
+              rgba(244, 164, 96, 0.1) 1.5px, 
+              transparent 3px, 
+              transparent 7.5px
             );
-          border-radius: 0 60px 60px 0;
+          border-radius: 0 90px 90px 0;
         }
 
-        /* Proa alta y curvada (característica principal) */
         .boat-prow {
           position: absolute;
-          top: -25px;
-          right: -12px;
-          width: 20px;
-          height: 50px;
+          top: -37.5px;
+          right: -18px;
+          width: 30px;
+          height: 75px;
           background: linear-gradient(170deg, 
             #B8860B 0%, 
             #DAA520 15%, 
@@ -721,40 +761,39 @@ const BackgroundScene: React.FC = () => {
             #F4A460 100%
           );
           border-radius: 40% 60% 30% 20%;
-          transform: rotate(-35deg) perspective(40px) rotateY(20deg);
+          transform: rotate(-35deg) perspective(60px) rotateY(20deg);
           box-shadow: 
-            0 0 15px rgba(255, 215, 0, 0.6),
-            0 0 25px rgba(255, 235, 59, 0.3),
-            inset 3px 0 10px rgba(255, 248, 220, 0.4),
-            inset -1px 0 6px rgba(184, 134, 11, 0.5);
+            0 0 22.5px rgba(255, 215, 0, 0.6),
+            0 0 37.5px rgba(255, 235, 59, 0.3),
+            inset 4.5px 0 15px rgba(255, 248, 220, 0.4),
+            inset -1.5px 0 9px rgba(184, 134, 11, 0.5);
         }
 
         .boat-prow::before {
           content: '';
           position: absolute;
-          top: 8px;
-          left: 3px;
-          width: 14px;
-          height: 34px;
+          top: 12px;
+          left: 4.5px;
+          width: 21px;
+          height: 51px;
           background: 
             repeating-linear-gradient(5deg, 
               rgba(255, 215, 0, 0.8) 0px, 
-              rgba(255, 235, 59, 0.6) 1px, 
-              rgba(255, 248, 220, 0.4) 2px,
-              rgba(244, 164, 96, 0.3) 3px,
-              transparent 4px
+              rgba(255, 235, 59, 0.6) 1.5px, 
+              rgba(255, 248, 220, 0.4) 3px,
+              rgba(244, 164, 96, 0.3) 4.5px,
+              transparent 6px
             );
           border-radius: 30%;
           opacity: 0.9;
         }
 
-        /* Popa también curvada pero menor */
         .boat-stern {
           position: absolute;
-          top: -18px;
-          left: -15px;
-          width: 18px;
-          height: 40px;
+          top: -27px;
+          left: -22.5px;
+          width: 27px;
+          height: 60px;
           background: linear-gradient(190deg, 
             #B8860B 0%, 
             #DAA520 20%, 
@@ -765,91 +804,89 @@ const BackgroundScene: React.FC = () => {
             #FFD700 100%
           );
           border-radius: 60% 40% 20% 30%;
-          transform: rotate(25deg) perspective(40px) rotateY(-20deg);
+          transform: rotate(25deg) perspective(60px) rotateY(-20deg);
           box-shadow: 
-            0 0 12px rgba(255, 215, 0, 0.5),
-            0 0 20px rgba(255, 235, 59, 0.2),
-            inset -3px 0 8px rgba(255, 248, 220, 0.4),
-            inset 1px 0 6px rgba(184, 134, 11, 0.5);
+            0 0 18px rgba(255, 215, 0, 0.5),
+            0 0 30px rgba(255, 235, 59, 0.2),
+            inset -4.5px 0 12px rgba(255, 248, 220, 0.4),
+            inset 1.5px 0 9px rgba(184, 134, 11, 0.5);
         }
 
         .boat-stern::before {
           content: '';
           position: absolute;
-          top: 6px;
-          left: 2px;
-          width: 14px;
-          height: 28px;
+          top: 9px;
+          left: 3px;
+          width: 21px;
+          height: 42px;
           background: 
             repeating-linear-gradient(-5deg, 
               rgba(255, 215, 0, 0.7) 0px, 
-              rgba(255, 235, 59, 0.5) 1px, 
-              rgba(255, 248, 220, 0.3) 2px,
-              rgba(244, 164, 96, 0.2) 3px,
-              transparent 4px
+              rgba(255, 235, 59, 0.5) 1.5px, 
+              rgba(255, 248, 220, 0.3) 3px,
+              rgba(244, 164, 96, 0.2) 4.5px,
+              transparent 6px
             );
           border-radius: 40%;
           opacity: 0.8;
         }
 
-        /* Amarres tradicionales con fibra */
         .totora-bindings {
           position: absolute;
-          top: 6px;
-          left: 20px;
-          width: 90px;
-          height: 1.5px;
+          top: 9px;
+          left: 30px;
+          width: 135px;
+          height: 2.25px;
           background: linear-gradient(90deg, 
             rgba(139, 69, 19, 0.9) 0%,
             rgba(160, 82, 45, 0.8) 50%,
             rgba(139, 69, 19, 0.9) 100%
           );
-          border-radius: 1px;
+          border-radius: 1.5px;
           box-shadow: 
-            0 0 4px rgba(139, 69, 19, 0.5),
-            0 1px 2px rgba(0, 0, 0, 0.3),
-            0 0 8px rgba(160, 82, 45, 0.3);
+            0 0 6px rgba(139, 69, 19, 0.5),
+            0 1.5px 3px rgba(0, 0, 0, 0.3),
+            0 0 12px rgba(160, 82, 45, 0.3);
         }
 
         .totora-bindings::before {
           content: '';
           position: absolute;
-          top: 4px;
-          left: 5px;
-          width: 80px;
-          height: 1.5px;
+          top: 6px;
+          left: 7.5px;
+          width: 120px;
+          height: 2.25px;
           background: linear-gradient(90deg, 
             rgba(139, 69, 19, 0.8) 0%,
             rgba(160, 82, 45, 0.7) 50%,
             rgba(139, 69, 19, 0.8) 100%
           );
-          border-radius: 1px;
-          box-shadow: 0 0 3px rgba(139, 69, 19, 0.4);
+          border-radius: 1.5px;
+          box-shadow: 0 0 4.5px rgba(139, 69, 19, 0.4);
         }
 
         .totora-bindings::after {
           content: '';
           position: absolute;
-          top: -4px;
-          left: 10px;
-          width: 70px;
-          height: 1.5px;
+          top: -6px;
+          left: 15px;
+          width: 105px;
+          height: 2.25px;
           background: linear-gradient(90deg, 
             rgba(139, 69, 19, 0.7) 0%,
             rgba(160, 82, 45, 0.6) 50%,
             rgba(139, 69, 19, 0.7) 100%
           );
-          border-radius: 1px;
-          box-shadow: 0 0 2px rgba(139, 69, 19, 0.3);
+          border-radius: 1.5px;
+          box-shadow: 0 0 3px rgba(139, 69, 19, 0.3);
         }
 
-        /* Superficie de totora tejida */
         .totora-surface {
           position: absolute;
-          top: 2px;
-          left: 15px;
-          width: 100px;
-          height: 14px;
+          top: 3px;
+          left: 22.5px;
+          width: 150px;
+          height: 21px;
           background: 
             radial-gradient(ellipse at center, 
               rgba(255, 248, 220, 0.4) 0%, 
@@ -858,17 +895,16 @@ const BackgroundScene: React.FC = () => {
               rgba(244, 164, 96, 0.1) 80%,
               transparent 100%
             );
-          border-radius: 50px;
+          border-radius: 75px;
           opacity: 0.7;
         }
 
-        /* Brillo dorado natural */
         .totora-shine {
           position: absolute;
-          top: 3px;
-          left: 25px;
-          width: 80px;
-          height: 5px;
+          top: 4.5px;
+          left: 37.5px;
+          width: 120px;
+          height: 7.5px;
           background: linear-gradient(90deg, 
             transparent 0%,
             rgba(255, 248, 220, 0.6) 20%,
@@ -876,23 +912,17 @@ const BackgroundScene: React.FC = () => {
             rgba(255, 248, 220, 0.6) 80%,
             transparent 100%
           );
-          border-radius: 20px;
+          border-radius: 30px;
           animation: golden-shimmer 4s ease-in-out infinite;
         }
 
-        @keyframes golden-shimmer {
-          0%, 100% { opacity: 0.3; }
-          50% { opacity: 0.7; }
-        }
-
-        /* Propulsión mística */
         .mystical-propulsion {
           position: absolute;
-          bottom: -15px;
+          bottom: -22.5px;
           left: 50%;
           transform: translateX(-50%);
-          width: 40px;
-          height: 20px;
+          width: 60px;
+          height: 30px;
           background: radial-gradient(ellipse at center, 
             rgba(0, 255, 255, 0.8) 0%, 
             rgba(30, 144, 255, 0.6) 40%, 
@@ -902,25 +932,24 @@ const BackgroundScene: React.FC = () => {
           border-radius: 50%;
           animation: mystical-glow 0.6s ease-in-out infinite alternate;
           box-shadow: 
-            0 0 25px rgba(0, 255, 255, 0.4),
-            0 0 50px rgba(30, 144, 255, 0.2);
+            0 0 37.5px rgba(0, 255, 255, 0.4),
+            0 0 75px rgba(30, 144, 255, 0.2);
         }
 
-        /* Estela del caballito */
         .wake-container {
           position: absolute;
           top: 50%;
           right: 100%;
           transform: translateY(-50%);
-          width: 450px;
-          height: 80px;
+          width: 675px;
+          height: 120px;
           pointer-events: none;
         }
 
         .wake-particle {
           position: absolute;
-          width: 8px;
-          height: 8px;
+          width: 12px;
+          height: 12px;
           background: radial-gradient(circle, 
             rgba(173, 216, 230, 0.9) 0%, 
             rgba(135, 206, 235, 0.6) 50%, 
@@ -929,109 +958,118 @@ const BackgroundScene: React.FC = () => {
           border-radius: 50%;
           animation: wake-flow 2s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite;
           box-shadow: 
-            0 0 15px rgba(173, 216, 230, 0.5),
-            0 0 30px rgba(135, 206, 235, 0.2);
+            0 0 22.5px rgba(173, 216, 230, 0.5),
+            0 0 45px rgba(135, 206, 235, 0.2);
         }
 
-        /* Nubes atmosféricas */
-        .cloud {
-          position: absolute;
-          width: 120px;
-          height: 40px;
-          background: rgba(255, 255, 255, 0.1);
-          border-radius: 40px;
-          animation: cloud-drift 60s linear infinite;
-          filter: blur(1px);
+        /* Animaciones */
+        @keyframes golden-shimmer {
+          0%, 100% { opacity: 0.3; }
+          50% { opacity: 0.7; }
         }
 
-        .cloud::before {
-          content: '';
-          position: absolute;
-          top: -15px;
-          left: 20px;
-          width: 50px;
-          height: 50px;
-          background: rgba(255, 255, 255, 0.08);
-          border-radius: 50%;
+        @keyframes mystical-glow {
+          0%, 100% { opacity: 0.8; transform: scale(1.1); }
+          50% { opacity: 1; transform: scale(1.2); }
         }
 
-        .cloud::after {
-          content: '';
-          position: absolute;
-          top: -10px;
-          right: 15px;
-          width: 40px;
-          height: 40px;
-          background: rgba(255, 255, 255, 0.06);
-          border-radius: 50%;
+        @keyframes wake-flow {
+          0% { 
+            transform: translate(0px, 0px) scale(1);
+            opacity: 1;
+          }
+          100% { 
+            transform: translate(-450px, 22.5px) scale(0.1);
+            opacity: 0;
+          }
         }
 
-        /* Animaciones épicas */
+        @keyframes condor-soaring {
+          0%, 100% { 
+            transform: translateY(0) rotateY(0deg) rotateZ(0deg);
+            filter: drop-shadow(0 0 30px rgba(0, 0, 0, 0.6));
+          }
+          50% { 
+            transform: translateY(-7.5px) rotateY(10deg) rotateZ(2deg);
+            filter: drop-shadow(0 0 52.5px rgba(0, 0, 0, 0.8));
+          }
+        }
+
+        @keyframes wing-flap-left {
+          0%, 100% { transform: rotate(0deg); }
+          50% { transform: rotate(-25deg); }
+        }
+
+        @keyframes wing-flap-right {
+          0%, 100% { transform: rotate(0deg); }
+          50% { transform: rotate(25deg); }
+        }
+
         @keyframes epic-journey {
           0% { 
             transform: translateX(140vw) translateY(0px) rotateZ(0deg);
-            filter: drop-shadow(0 0 25px rgba(255, 140, 0, 0.3));
+            filter: drop-shadow(0 0 37.5px rgba(255, 140, 0, 0.3));
           }
           5% { 
-            transform: translateX(120vw) translateY(-15px) rotateZ(-2deg);
+            transform: translateX(120vw) translateY(-22.5px) rotateZ(-2deg);
           }
           10% { 
-            transform: translateX(105vw) translateY(-30px) rotateZ(-4deg);
+            transform: translateX(105vw) translateY(-45px) rotateZ(-4deg);
           }
           15% { 
-            transform: translateX(90vw) translateY(-25px) rotateZ(-3deg);
+            transform: translateX(90vw) translateY(-37.5px) rotateZ(-3deg);
           }
           20% { 
-            transform: translateX(78vw) translateY(-40px) rotateZ(-5deg);
+            transform: translateX(78vw) translateY(-60px) rotateZ(-5deg);
           }
           25% { 
-            transform: translateX(66vw) translateY(-35px) rotateZ(-4deg);
+            transform: translateX(66vw) translateY(-52.5px) rotateZ(-4deg);
           }
           30% { 
-            transform: translateX(56vw) translateY(-20px) rotateZ(-2deg);
+            transform: translateX(56vw) translateY(-30px) rotateZ(-2deg);
           }
           35% { 
-            transform: translateX(47vw) translateY(-10px) rotateZ(-1deg);
+            transform: translateX(47vw) translateY(-15px) rotateZ(-1deg);
           }
           40% { 
-            transform: translateX(38vw) translateY(5px) rotateZ(1deg);
+            transform: translateX(38vw) translateY(7.5px) rotateZ(1deg);
           }
           45% { 
-            transform: translateX(30vw) translateY(15px) rotateZ(3deg);
+            transform: translateX(30vw) translateY(22.5px) rotateZ(3deg);
           }
           50% { 
-            transform: translateX(23vw) translateY(25px) rotateZ(4deg);
+            transform: translateX(23vw) translateY(37.5px) rotateZ(4deg);
           }
           55% { 
-            transform: translateX(17vw) translateY(20px) rotateZ(3deg);
+            transform: translateX(17vw) translateY(30px) rotateZ(3deg);
           }
           60% { 
-            transform: translateX(12vw) translateY(10px) rotateZ(2deg);
+            transform: translateX(12vw) translateY(15px) rotateZ(2deg);
           }
           65% { 
-            transform: translateX(7vw) translateY(-5px) rotateZ(0deg);
+            transform: translateX(7vw) translateY(-7.5px) rotateZ(0deg);
           }
           70% { 
-            transform: translateX(3vw) translateY(-15px) rotateZ(-2deg);
+            transform: translateX(3vw) translateY(-22.5px) rotateZ(-2deg);
           }
           75% { 
-            transform: translateX(-1vw) translateY(-25px) rotateZ(-4deg);
+            transform: translateX(-1vw) translateY(-37.5px) rotateZ(-4deg);
           }
           80% { 
-            transform: translateX(-4vw) translateY(-35px) rotateZ(-5deg);
+            transform: translateX(-4vw) translateY(-52.5px) rotateZ(-5deg);
           }
           85% { 
-            transform: translateX(-7vw) translateY(-40px) rotateZ(-6deg);
+            transform: translateX(-7vw) translateY(-60px) rotateZ(-6deg);
           }
           90% { 
-            transform: translateX(-10vw) translateY(-35px) rotateZ(-5deg);
+            transform: translateX(-10vw) translateY(-52.5px) rotateZ(-5deg);
           }
           95% { 
-            transform: translateX(-12vw) translateY(-20px) rotateZ(-3deg);
+            transform: translateX(-12vw) translateY(-30px) rotateZ(-3deg);
           }
           100% { 
             transform: translateX(-15vw) translateY(0px) rotateZ(0deg);
-            filter: drop-shadow(0 0 40px rgba(255, 140, 0, 0.5));
+            filter: drop-shadow(0 0 60px rgba(255, 140, 0, 0.5));
           }
         }
 
@@ -1039,280 +1077,28 @@ const BackgroundScene: React.FC = () => {
           0%, 100% { 
             transform: translateY(0px) rotateX(0deg);
           }
-          25% { 
-            transform: translateY(-8px) rotateX(1deg);
-          }
           50% { 
-            transform: translateY(-12px) rotateX(0deg);
-          }
-          75% { 
-            transform: translateY(-6px) rotateX(-1deg);
-          }
-        }
-
-        @keyframes condor-soaring {
-          0%, 100% { 
-            transform: translateY(0px) rotateZ(-5deg);
-          }
-          25% { 
-            transform: translateY(-12px) rotateZ(-8deg);
-          }
-          50% { 
-            transform: translateY(-20px) rotateZ(-3deg);
-          }
-          75% { 
-            transform: translateY(-15px) rotateZ(-6deg);
-          }
-        }
-
-        @keyframes wing-flap-left {
-          0%, 100% { 
-            transform: rotateZ(15deg) rotateY(-10deg);
-          }
-          50% { 
-            transform: rotateZ(-5deg) rotateY(-25deg);
-          }
-        }
-
-        @keyframes wing-flap-right {
-          0%, 100% { 
-            transform: rotateZ(-15deg) rotateY(10deg);
-          }
-          50% { 
-            transform: rotateZ(5deg) rotateY(25deg);
-          }
-        }
-
-        @keyframes mystical-glow {
-          0% { 
-            opacity: 0.6; 
-            transform: translateX(-50%) scaleY(0.8) scaleX(1);
-          }
-          100% { 
-            opacity: 1; 
-            transform: translateX(-50%) scaleY(1.3) scaleX(1.2);
-          }
-        }
-
-        @keyframes wake-flow {
-          0% { 
-            opacity: 1; 
-            transform: scale(1) translateY(0px) rotate(0deg);
-          }
-          30% { 
-            opacity: 0.8; 
-            transform: scale(1.4) translateY(-8px) rotate(120deg);
-          }
-          70% { 
-            opacity: 0.4; 
-            transform: scale(1.8) translateY(-15px) rotate(240deg);
-          }
-          100% { 
-            opacity: 0; 
-            transform: scale(0.3) translateY(20px) rotate(360deg);
+            transform: translateY(-4.5px) rotateX(2deg);
           }
         }
 
         @keyframes cloud-drift {
-          from { transform: translateX(0px) translateY(0px); }
-          to { transform: translateX(-150px) translateY(-20px); }
-        }
-
-        /* Montañas andinas ultra realistas */
-        .andes-mountains {
-          position: absolute;
-          bottom: 0;
-          left: 0;
-          width: 100%;
-          height: 55%;
-          z-index: 10;
-        }
-
-        /* Capa de montañas lejanas */
-        .mountain-distant {
-          position: absolute;
-          bottom: 0;
-          left: -5%;
-          width: 0;
-          height: 0;
-          border-left: 200px solid transparent;
-          border-right: 180px solid transparent;
-          border-bottom: 280px solid rgba(20, 12, 8, 0.6);
-          z-index: 10;
-        }
-
-        /* Montaña principal izquierda */
-        .mountain-left {
-          position: absolute;
-          bottom: 0;
-          left: 5%;
-          width: 0;
-          height: 0;
-          border-left: 320px solid transparent;
-          border-right: 280px solid transparent;
-          border-bottom: 420px solid #0d0805;
-          z-index: 12;
-        }
-
-        .mountain-left::before {
-          content: '';
-          position: absolute;
-          top: -80px;
-          left: -100px;
-          width: 0;
-          height: 0;
-          border-left: 100px solid transparent;
-          border-right: 120px solid transparent;
-          border-bottom: 90px solid rgba(26, 15, 8, 0.9);
-        }
-
-        .mountain-left::after {
-          content: '';
-          position: absolute;
-          top: -45px;
-          left: 20px;
-          width: 0;
-          height: 0;
-          border-left: 70px solid transparent;
-          border-right: 90px solid transparent;
-          border-bottom: 60px solid rgba(45, 28, 16, 0.8);
-        }
-
-        /* Montaña central majestuosa */
-        .mountain-center {
-          position: absolute;
-          bottom: 0;
-          left: 32%;
-          width: 0;
-          height: 0;
-          border-left: 380px solid transparent;
-          border-right: 420px solid transparent;
-          border-bottom: 520px solid #050302;
-          z-index: 13;
-        }
-
-        .mountain-center::before {
-          content: '';
-          position: absolute;
-          top: -120px;
-          left: -140px;
-          width: 0;
-          height: 0;
-          border-left: 140px solid transparent;
-          border-right: 160px solid transparent;
-          border-bottom: 130px solid rgba(13, 8, 5, 0.9);
-        }
-
-        .mountain-center::after {
-          content: '';
-          position: absolute;
-          top: -70px;
-          left: 60px;
-          width: 0;
-          height: 0;
-          border-left: 100px solid transparent;
-          border-right: 130px solid transparent;
-          border-bottom: 90px solid rgba(26, 15, 8, 0.8);
-        }
-
-        /* Montaña derecha */
-        .mountain-right {
-          position: absolute;
-          bottom: 0;
-          right: 8%;
-          width: 0;
-          height: 0;
-          border-left: 300px solid transparent;
-          border-right: 250px solid transparent;
-          border-bottom: 380px solid #0a0603;
-          z-index: 11;
-        }
-
-        .mountain-right::before {
-          content: '';
-          position: absolute;
-          top: -85px;
-          left: -90px;
-          width: 0;
-          height: 0;
-          border-left: 90px solid transparent;
-          border-right: 110px solid transparent;
-          border-bottom: 100px solid rgba(20, 12, 8, 0.9);
-        }
-
-        /* Efectos atmosféricos avanzados */
-        .cosmic-atmosphere {
-          position: absolute;
-          bottom: 0;
-          left: 0;
-          width: 100%;
-          height: 70%;
-          background: 
-            radial-gradient(ellipse 90% 50% at 50% 100%, 
-              rgba(255, 215, 0, 0.18) 0%,
-              rgba(255, 165, 0, 0.14) 25%,
-              rgba(255, 140, 0, 0.12) 40%,
-              rgba(255, 69, 0, 0.08) 60%,
-              rgba(33, 150, 243, 0.04) 80%,
-              transparent 100%
-            );
-          z-index: 8;
-          animation: cosmic-breathing 12s ease-in-out infinite;
-        }
-
-        .aurora-rays {
-          position: absolute;
-          bottom: 100px;
-          left: 50%;
-          transform: translateX(-50%);
-          width: 600px;
-          height: 300px;
-          background: 
-            conic-gradient(from 45deg at 50% 100%, 
-              transparent 0deg,
-              rgba(255, 215, 0, 0.12) 20deg,
-              transparent 40deg,
-              rgba(255, 165, 0, 0.08) 60deg,
-              transparent 80deg,
-              rgba(255, 140, 0, 0.10) 100deg,
-              transparent 120deg,
-              rgba(255, 69, 0, 0.06) 140deg,
-              transparent 160deg,
-              rgba(33, 150, 243, 0.04) 180deg,
-              transparent 200deg
-            );
-          border-radius: 50% 50% 0 0;
-          animation: aurora-dance 25s linear infinite;
-          z-index: 7;
-        }
-
-        @keyframes cosmic-breathing {
-          0%, 100% { opacity: 0.7; transform: scale(1); }
-          50% { opacity: 1; transform: scale(1.02); }
-        }
-
-        @keyframes aurora-dance {
-          from { transform: translateX(-50%) rotate(-5deg); }
-          to { transform: translateX(-50%) rotate(355deg); }
+          from { transform: translateX(-100vw); }
+          to { transform: translateX(100vw); }
         }
       `}</style>
 
-      {/* Campo de estrellas */}
-      <div className="stellar-field">
+      <div className="horizon-gradient"></div>
+      <div className="mountains">
+        <div className="mountain mountain-1"></div>
+        <div className="mountain mountain-2"></div>
+        <div className="mountain mountain-3"></div>
+      </div>
+      <div className="stars">
         {stars}
       </div>
-
-      {/* Constelaciones incas */}
-      <div className="inca-constellations">
-        {constellationElements}
-      </div>
-
-      {/* Nubes atmosféricas */}
-      <div className="atmospheric-clouds">
-        {clouds}
-      </div>
-
-      {/* Cóndor andino realista sobre caballito de totora */}
+      {constellationElements}
+      {clouds}
       <div className="totora-rider">
         <div className="rider-container">
           <div className="condor">
@@ -1321,14 +1107,14 @@ const BackgroundScene: React.FC = () => {
                 <div className="condor-beak"></div>
               </div>
               <div className="condor-collar"></div>
-              <div className="condor-wing-left">
-                <div className="wing-feathers-left"></div>
-              </div>
-              <div className="condor-wing-right">
-                <div className="wing-feathers-right"></div>
-              </div>
-              <div className="condor-tail"></div>
             </div>
+            <div className="condor-wing-left">
+              <div className="wing-feathers-left"></div>
+            </div>
+            <div className="condor-wing-right">
+              <div className="wing-feathers-right"></div>
+            </div>
+            <div className="condor-tail"></div>
           </div>
           <div className="totora-boat">
             <div className="boat-prow"></div>
@@ -1336,25 +1122,13 @@ const BackgroundScene: React.FC = () => {
             <div className="totora-bindings"></div>
             <div className="totora-surface"></div>
             <div className="totora-shine"></div>
-            <div className="mystical-propulsion"></div>
           </div>
-          <div className="wake-container">
-            {wakeParticles}
-          </div>
+          <div className="mystical-propulsion"></div>
+        </div>
+        <div className="wake-container">
+          {wakeParticles}
         </div>
       </div>
-
-      {/* Cordillera de los Andes */}
-      <div className="andes-mountains">
-        <div className="mountain-distant"></div>
-        <div className="mountain-left"></div>
-        <div className="mountain-center"></div>
-        <div className="mountain-right"></div>
-      </div>
-
-      {/* Efectos atmosféricos */}
-      <div className="cosmic-atmosphere"></div>
-      <div className="aurora-rays"></div>
     </div>
   );
 };
