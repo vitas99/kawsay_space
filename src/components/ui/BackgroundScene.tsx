@@ -1,6 +1,6 @@
 import React from 'react';
 
-const BackgroundScene = () => {
+const BackgroundScene: React.FC = () => {
   // Generate starfield
   const generateStarField = () => {
     return [...Array(300)].map((_, i) => {
@@ -534,7 +534,7 @@ const BackgroundScene = () => {
             0 0 75px rgba(30, 144, 255, 0.2);
         }
 
-        /* Propulsores espaciales */
+        /* Propulsores espaciales con luces debajo */
         .space-thrusters {
           position: absolute;
           bottom: -45px;
@@ -561,8 +561,32 @@ const BackgroundScene = () => {
           border-radius: 50% 50% 0 0;
           animation: thruster-flame 0.3s ease-in-out infinite alternate;
           box-shadow: 
-            0 0 25px rgba(0, 200, 255, 0.8),
-            0 0 50px rgba(0, 255, 255, 0.4);
+            0 0 15px rgba(0, 200, 255, 0.6),
+            0 0 30px rgba(0, 255, 255, 0.4);
+          transition: box-shadow 0.2s ease-in-out;
+        }
+
+        .thruster::after {
+          content: '';
+          position: absolute;
+          bottom: -30px;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 20px;
+          height: 40px;
+          background: linear-gradient(
+            to bottom,
+            rgba(0, 255, 255, 0.9) 0%,
+            rgba(0, 200, 255, 0.7) 50%,
+            transparent 100%
+          );
+          border-radius: 50% 50% 0 0;
+          opacity: 0.8;
+          animation: thruster-light 0.5s ease-in-out infinite alternate;
+          box-shadow: 
+            0 0 30px rgba(0, 255, 255, 0.8),
+            0 0 60px rgba(0, 200, 255, 0.6),
+            0 0 90px rgba(255, 255, 255, 0.4);
         }
 
         .thruster-left {
@@ -592,16 +616,57 @@ const BackgroundScene = () => {
             transform: scaleY(1) scaleX(0.8);
             opacity: 0.8;
             box-shadow: 
-              0 0 25px rgba(0, 200, 255, 0.8),
-              0 0 50px rgba(0, 255, 255, 0.4);
+              0 0 15px rgba(0, 200, 255, 0.6),
+              0 0 30px rgba(0, 255, 255, 0.4);
           }
           100% { 
             transform: scaleY(1.3) scaleX(1.1);
             opacity: 1;
             box-shadow: 
-              0 0 40px rgba(0, 200, 255, 1),
-              0 0 80px rgba(0, 255, 255, 0.6),
-              0 0 120px rgba(255, 255, 255, 0.3);
+              0 0 30px rgba(0, 200, 255, 0.9),
+              0 0 60px rgba(0, 255, 255, 0.7),
+              0 0 90px rgba(255, 255, 255, 0.5);
+          }
+        }
+
+        /* Luces de propulsores durante el movimiento */
+        .totora-rider .space-thrusters .thruster {
+          animation: thruster-glow 12s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+        }
+
+        @keyframes thruster-glow {
+          0%, 5% { box-shadow: 0 0 15px rgba(0, 200, 255, 0.6), 0 0 30px rgba(0, 255, 255, 0.4); }
+          10%, 15% { box-shadow: 0 0 30px rgba(0, 200, 255, 0.9), 0 0 60px rgba(0, 255, 255, 0.7), 0 0 90px rgba(255, 255, 255, 0.5); }
+          20%, 25% { box-shadow: 0 0 40px rgba(0, 200, 255, 1), 0 0 80px rgba(0, 255, 255, 0.8), 0 0 120px rgba(255, 255, 255, 0.6); }
+          30%, 35% { box-shadow: 0 0 30px rgba(0, 200, 255, 0.9), 0 0 60px rgba(0, 255, 255, 0.7), 0 0 90px rgba(255, 255, 255, 0.5); }
+          40%, 45% { box-shadow: 0 0 20px rgba(0, 200, 255, 0.7), 0 0 40px rgba(0, 255, 255, 0.5); }
+          50%, 55% { box-shadow: 0 0 30px rgba(0, 200, 255, 0.9), 0 0 60px rgba(0, 255, 255, 0.7), 0 0 90px rgba(255, 255, 255, 0.5); }
+          60%, 65% { box-shadow: 0 0 40px rgba(0, 200, 255, 1), 0 0 80px rgba(0, 255, 255, 0.8), 0 0 120px rgba(255, 255, 255, 0.6); }
+          70%, 75% { box-shadow: 0 0 30px rgba(0, 200, 255, 0.9), 0 0 60px rgba(0, 255, 255, 0.7), 0 0 90px rgba(255, 255, 255, 0.5); }
+          80%, 85% { box-shadow: 0 0 20px rgba(0, 200, 255, 0.7), 0 0 40px rgba(0, 255, 255, 0.5); }
+          90%, 95% { box-shadow: 0 0 30px rgba(0, 200, 255, 0.9), 0 0 60px rgba(0, 255, 255, 0.7), 0 0 90px rgba(255, 255, 255, 0.5); }
+          100% { box-shadow: 0 0 15px rgba(0, 200, 255, 0.6), 0 0 30px rgba(0, 255, 255, 0.4); }
+        }
+
+        /* Luces debajo de los propulsores */
+        @keyframes thruster-light {
+          0% { 
+            height: 40px;
+            opacity: 0.8;
+            transform: translateX(-50%) scaleY(1);
+            box-shadow: 
+              0 0 30px rgba(0, 255, 255, 0.8),
+              0 0 60px rgba(0, 200, 255, 0.6),
+              0 0 90px rgba(255, 255, 255, 0.4);
+          }
+          100% { 
+            height: 70px;
+            opacity: 1;
+            transform: translateX(-50%) scaleY(1.8);
+            box-shadow: 
+              0 0 50px rgba(0, 255, 255, 1),
+              0 0 100px rgba(0, 200, 255, 0.9),
+              0 0 150px rgba(255, 255, 255, 0.6);
           }
         }
 
@@ -790,13 +855,13 @@ const BackgroundScene = () => {
           }
         }
 
-        /* Montañas andinas suaves */
+        /* Montañas andinas más suaves y menos puntiagudas */
         .mountains {
           position: absolute;
           bottom: 0;
           left: 0;
           width: 100%;
-          height: 45%;
+          height: 50%;
           z-index: 1;
         }
 
@@ -810,32 +875,32 @@ const BackgroundScene = () => {
           left: 0;
           width: 0;
           height: 0;
-          border-left: 280px solid transparent;
-          border-right: 350px solid transparent;
-          border-bottom: 300px solid rgba(45, 55, 72, 0.8);
-          border-radius: 50% 50% 0 0;
+          border-left: 300px solid transparent;
+          border-right: 400px solid transparent;
+          border-bottom: 400px solid #4a4033; /* Tierra marrón oscuro */
+          border-radius: 70% 70% 30% 30%; /* Más redondeado */
         }
 
-        /* Montaña central - más alta y suave */
+        /* Montaña central - menos puntiaguda */
         .mountain-2 {
-          left: 25%;
+          left: 20%;
           width: 0;
           height: 0;
-          border-left: 320px solid transparent;
-          border-right: 380px solid transparent;
-          border-bottom: 350px solid rgba(55, 65, 81, 0.9);
-          border-radius: 60% 60% 0 0;
+          border-left: 350px solid transparent;
+          border-right: 450px solid transparent;
+          border-bottom: 450px solid #3e2f1a; /* Marrón rojizo */
+          border-radius: 75% 75% 40% 40%; /* Más redondeado */
         }
 
-        /* Montaña derecha - suave */
+        /* Montaña derecha - suave y menos puntiaguda */
         .mountain-3 {
           right: 0;
           width: 0;
           height: 0;
-          border-left: 300px solid transparent;
-          border-right: 250px solid transparent;
-          border-bottom: 280px solid rgba(40, 50, 65, 0.85);
-          border-radius: 55% 45% 0 0;
+          border-left: 320px solid transparent;
+          border-right: 300px solid transparent;
+          border-bottom: 380px solid #4a4033; /* Tierra marrón oscuro */
+          border-radius: 65% 65% 35% 35%; /* Más redondeado */
         }
 
         /* Enhanced horizon gradient */
@@ -1007,7 +1072,7 @@ const BackgroundScene = () => {
           </div>
           <div className="mystical-propulsion"></div>
           
-          {/* Propulsores espaciales */}
+          {/* Propulsores espaciales con luces debajo */}
           <div className="space-thrusters">
             <div className="thruster thruster-left"></div>
             <div className="thruster thruster-center-left"></div>
