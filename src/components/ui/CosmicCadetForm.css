@@ -1,80 +1,85 @@
-/* CosmicCadetForm.css - Formulario de registro cósmico */
+/* CosmicCadetForm.css - Formulario de registro cósmico sin conflictos */
 
-/* Contenedor principal del formulario */
+/* Contenedor principal del formulario - SIN fondo propio */
 .cosmic-cadet-form {
-  min-height: 100vh;
-  background: linear-gradient(to bottom, #1f2937, #1e3a8a, #7c3aed);
+  /* Removido: min-height: 100vh; */
+  /* Removido: background: linear-gradient(...); */
   position: relative;
-  overflow: hidden;
+  /* Removido: overflow: hidden; */
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 1rem;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  /* Permitir que el contenedor se adapte al contenido */
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
 }
 
-/* Estrellas decorativas */
-.star {
+/* Estrellas decorativas - Más sutiles para no competir con el fondo */
+.cosmic-cadet-form .star {
   position: absolute;
-  background: white;
+  background: rgba(255, 255, 255, 0.6);
   border-radius: 50%;
   animation: twinkle var(--duration, 2s) ease-in-out infinite;
+  z-index: 1;
 }
 
-.star-1 {
-  width: 3px;
-  height: 3px;
-  top: 20%;
-  left: 15%;
-  --duration: 2.5s;
+.cosmic-cadet-form .star-1 {
+  width: 2px;
+  height: 2px;
+  top: 10%;
+  left: 5%;
+  --duration: 3s;
   animation-delay: 0s;
 }
 
-.star-2 {
-  width: 2px;
-  height: 2px;
-  top: 40%;
-  right: 20%;
-  --duration: 3s;
+.cosmic-cadet-form .star-2 {
+  width: 1.5px;
+  height: 1.5px;
+  top: 25%;
+  right: 8%;
+  --duration: 3.5s;
   animation-delay: 1s;
 }
 
-.star-3 {
-  width: 4px;
-  height: 4px;
-  top: 60%;
-  left: 10%;
-  --duration: 2s;
+.cosmic-cadet-form .star-3 {
+  width: 2.5px;
+  height: 2.5px;
+  top: 75%;
+  left: 3%;
+  --duration: 2.5s;
   animation-delay: 0.5s;
 }
 
-.star-4 {
-  width: 2px;
-  height: 2px;
-  top: 80%;
-  right: 15%;
-  --duration: 3.5s;
+.cosmic-cadet-form .star-4 {
+  width: 1.5px;
+  height: 1.5px;
+  top: 85%;
+  right: 6%;
+  --duration: 4s;
   animation-delay: 1.5s;
 }
 
-.star-5 {
-  width: 3px;
-  height: 3px;
-  top: 10%;
-  right: 40%;
-  --duration: 2.8s;
+.cosmic-cadet-form .star-5 {
+  width: 2px;
+  height: 2px;
+  top: 5%;
+  right: 15%;
+  --duration: 3.2s;
   animation-delay: 0.8s;
 }
 
 /* Animaciones para las estrellas */
 @keyframes twinkle {
   0%, 100% {
-    opacity: 0.3;
+    opacity: 0.2;
     transform: scale(1);
   }
   50% {
-    opacity: 1;
-    transform: scale(1.2);
+    opacity: 0.8;
+    transform: scale(1.1);
   }
 }
 
@@ -83,40 +88,41 @@
     transform: translateY(0px);
   }
   50% {
-    transform: translateY(-10px);
+    transform: translateY(-5px);
   }
 }
 
 /* Efectos de glassmorphism mejorados */
 .form-container {
-  background: rgba(30, 41, 59, 0.4);
+  background: rgba(30, 41, 59, 0.7);
   /* Orden correcto: webkit primero, luego estándar */
-  -webkit-backdrop-filter: blur(16px);
-  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
   border-radius: 1.5rem;
-  border: 1px solid rgba(6, 182, 212, 0.2);
+  border: 1px solid rgba(6, 182, 212, 0.3);
   box-shadow: 
-    0 25px 50px -12px rgba(0, 0, 0, 0.25),
-    0 0 0 1px rgba(6, 182, 212, 0.1),
+    0 25px 50px -12px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(6, 182, 212, 0.15),
     inset 0 1px 0 rgba(255, 255, 255, 0.1);
   padding: 2rem;
   width: 100%;
   max-width: 28rem;
   position: relative;
+  z-index: 10;
 }
 
 /* Botón de regreso mejorado */
 .back-button {
   position: absolute;
-  top: 1.5rem;
-  left: 1.5rem;
-  background: rgba(30, 41, 59, 0.6);
+  top: -60px;
+  left: 0;
+  background: rgba(30, 41, 59, 0.8);
   /* Orden correcto: webkit primero, luego estándar */
   -webkit-backdrop-filter: blur(16px);
   backdrop-filter: blur(16px);
   border-radius: 50%;
   padding: 0.75rem;
-  border: 1px solid rgba(6, 182, 212, 0.2);
+  border: 1px solid rgba(6, 182, 212, 0.3);
   color: rgb(34, 211, 238);
   transition: all 0.3s ease;
   cursor: pointer;
@@ -126,12 +132,14 @@
   align-items: center;
   justify-content: center;
   font-family: inherit;
+  z-index: 11;
 }
 
 .back-button:hover:not(:disabled) {
-  border-color: rgba(6, 182, 212, 0.4);
+  border-color: rgba(6, 182, 212, 0.5);
   color: rgb(103, 232, 249);
   transform: translateX(-2px);
+  background: rgba(30, 41, 59, 0.9);
 }
 
 .back-button:disabled {
@@ -481,8 +489,8 @@
   }
   
   .back-button {
-    top: 1rem;
-    left: 1rem;
+    top: -50px;
+    left: 0;
     width: 44px;
     height: 44px;
     padding: 0.5rem;
@@ -535,6 +543,7 @@
   .back-button {
     width: 40px;
     height: 40px;
+    top: -45px;
   }
   
   .cosmic-title {
@@ -557,7 +566,7 @@
 
 /* Mejoras para accesibilidad */
 @media (prefers-reduced-motion: reduce) {
-  .star,
+  .cosmic-cadet-form .star,
   .cosmic-avatar,
   .cosmic-title,
   .back-button,
@@ -579,12 +588,12 @@
 @media (prefers-contrast: high) {
   .form-container {
     border: 2px solid rgb(6, 182, 212);
-    background: rgba(30, 41, 59, 0.9);
+    background: rgba(30, 41, 59, 0.95);
   }
   
   .back-button {
     border: 2px solid rgb(6, 182, 212);
-    background: rgba(30, 41, 59, 0.9);
+    background: rgba(30, 41, 59, 0.95);
   }
   
   .cosmic-input {
@@ -638,7 +647,7 @@
 
 /* Mejoras visuales para diferentes estados */
 .form-container:hover {
-  border-color: rgba(6, 182, 212, 0.3);
+  border-color: rgba(6, 182, 212, 0.4);
 }
 
 /* Efectos de transición suaves para todos los elementos interactivos */

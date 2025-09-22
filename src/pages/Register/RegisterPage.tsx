@@ -32,16 +32,16 @@ const RegisterPage: React.FC = () => {
     <div className="register-page">
       {/* Campo de estrellas de fondo */}
       <div className="stars-background">
-        {/* Estrellas dinámicas generadas */}
-        {Array.from({ length: 50 }, (_, i) => (
+        {/* Estrellas dinámicas generadas - Campo estelar denso */}
+        {Array.from({ length: 200 }, (_, i) => (
           <div
             key={i}
-            className={`star-bg star-${(i % 5) + 1}`}
+            className={`star-bg star-${(i % 10) + 1}`}
             style={{
               left: `${Math.random() * 100}%`,
               top: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 4}s`,
-              animationDuration: `${2 + Math.random() * 3}s`
+              animationDelay: `${Math.random() * 8}s`,
+              animationDuration: `${1 + Math.random() * 5}s`
             }}
           />
         ))}
@@ -51,6 +51,23 @@ const RegisterPage: React.FC = () => {
       <div className="nebula nebula-1" />
       <div className="nebula nebula-2" />
       <div className="nebula nebula-3" />
+      <div className="nebula nebula-4" />
+
+      {/* Lluvia de meteoritos */}
+      <div className="meteor-shower">
+        <div className="meteor meteor-1" />
+        <div className="meteor meteor-2" />
+        <div className="meteor meteor-3" />
+        <div className="meteor meteor-4" />
+        <div className="meteor meteor-5" />
+        <div className="meteor meteor-6" />
+      </div>
+
+      {/* Estrellas fugaces múltiples */}
+      <div className="shooting-star shooting-star-1" />
+      <div className="shooting-star shooting-star-2" />
+      <div className="shooting-star shooting-star-3" />
+      <div className="shooting-star shooting-star-4" />
 
       {/* Contenido principal */}
       <div className="register-content">
@@ -64,7 +81,10 @@ const RegisterPage: React.FC = () => {
       <div className="cosmic-elements">
         <div className="planet planet-1" />
         <div className="planet planet-2" />
-        <div className="shooting-star" />
+        <div className="planet planet-3" />
+        <div className="planet planet-4" />
+        <div className="planet planet-5" />
+        <div className="planet planet-6" />
       </div>
     </div>
   );
