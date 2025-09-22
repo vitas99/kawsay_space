@@ -1,12 +1,12 @@
 import React from 'react';
 
-const BackgroundScene: React.FC = () => {
-  // Sistema de estrellas más sofisticado
+const BackgroundScene = () => {
+  // Generate starfield
   const generateStarField = () => {
     return [...Array(300)].map((_, i) => {
       const left = Math.random() * 100;
-      const top = Math.random() * 70; // Matches .stars height: 70%
-      const size = i % 5 === 4 ? 1.5 : i % 3 === 0 ? 4.5 : 3; // 1.5x of 1px, 3px, 2px
+      const top = Math.random() * 70;
+      const size = i % 5 === 4 ? 1 : i % 3 === 0 ? 3 : 2;
       const background = i % 5 === 4 ? '#ffd700' : i % 3 === 0 ? '#87ceeb' : 'white';
       const animationDelay = Math.random() * 2;
 
@@ -27,171 +27,6 @@ const BackgroundScene: React.FC = () => {
     });
   };
 
-  // Partículas para el rastro del caballito
-  const wakeParticles = [...Array(40)].map((_, i) => {
-    const delay = i * 0.06;
-    const offsetX = -i * 15 - Math.sin(i * 0.4) * 18; // 1.5x 10, 12
-    const offsetY = Math.sin(i * 0.6) * 27 + Math.cos(i * 0.3) * 15; // 1.5x 18, 10
-    const scale = 1 - i * 0.02;
-
-    return (
-      <div
-        key={i}
-        className="wake-particle"
-        style={{
-          left: `${offsetX}px`,
-          top: `${offsetY}px`,
-          animationDelay: `${delay}s`,
-          transform: `scale(${scale})`
-        }}
-      />
-    );
-  });
-
-  // Nubes atmosféricas
-  const clouds = [...Array(8)].map((_, i) => {
-    const left = Math.random() * 120 - 10;
-    const top = 50 + Math.random() * 30;
-    const scale = 0.6 + Math.random() * 0.8;
-    const duration = 40 + Math.random() * 20;
-    const delay = Math.random() * 10;
-
-    return (
-      <div
-        key={i}
-        className="cloud"
-        style={{
-          left: `${left}%`,
-          top: `${top}%`,
-          transform: `scale(${scale})`,
-          animationDuration: `${duration}s`,
-          animationDelay: `${delay}s`
-        }}
-      />
-    );
-  });
-
-  // Constelaciones incas
-  const incaConstellations = [
-    {
-      name: 'chakana',
-      stars: [
-        { x: 75, y: 15, size: 3 },
-        { x: 78, y: 18, size: 2.5 },
-        { x: 72, y: 18, size: 2.5 },
-        { x: 75, y: 21, size: 3 },
-        { x: 75, y: 18, size: 2 }
-      ],
-      connections: [
-        [0, 1], [0, 2], [0, 3], [1, 3], [2, 3], [0, 4], [1, 4], [2, 4], [3, 4]
-      ]
-    },
-    {
-      name: 'llama',
-      stars: [
-        { x: 65, y: 25, size: 2 },
-        { x: 68, y: 27, size: 2.5 },
-        { x: 70, y: 30, size: 2 },
-        { x: 67, y: 32, size: 2 },
-        { x: 64, y: 30, size: 1.5 },
-        { x: 62, y: 28, size: 2 }
-      ],
-      connections: [
-        [0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 0]
-      ]
-    },
-    {
-      name: 'condor',
-      stars: [
-        { x: 25, y: 10, size: 2.5 },
-        { x: 20, y: 12, size: 2 },
-        { x: 30, y: 12, size: 2 },
-        { x: 25, y: 15, size: 2 },
-        { x: 22, y: 17, size: 1.5 },
-        { x: 28, y: 17, size: 1.5 }
-      ],
-      connections: [
-        [0, 1], [0, 2], [0, 3], [3, 4], [3, 5], [1, 4], [2, 5]
-      ]
-    },
-    {
-      name: 'partridge',
-      stars: [
-        { x: 45, y: 20, size: 2 },
-        { x: 48, y: 22, size: 1.5 },
-        { x: 50, y: 25, size: 2 },
-        { x: 47, y: 27, size: 1.5 },
-        { x: 43, y: 25, size: 1.5 }
-      ],
-      connections: [
-        [0, 1], [1, 2], [2, 3], [3, 4], [4, 0]
-      ]
-    },
-    {
-      name: 'serpent',
-      stars: [
-        { x: 15, y: 25, size: 1.5 },
-        { x: 18, y: 28, size: 2 },
-        { x: 22, y: 30, size: 1.5 },
-        { x: 26, y: 32, size: 2 },
-        { x: 30, y: 35, size: 1.5 },
-        { x: 34, y: 37, size: 2 }
-      ],
-      connections: [
-        [0, 1], [1, 2], [2, 3], [3, 4], [4, 5]
-      ]
-    }
-  ];
-
-  // Generar estrellas de constelaciones
-  const constellationElements = incaConstellations.map((constellation) => {
-    const stars = constellation.stars.map((star, starIndex) => (
-      <div
-        key={`${constellation.name}-star-${starIndex}`}
-        className={`constellation-star ${constellation.name}-star`}
-        style={{
-          left: `${star.x}%`,
-          top: `${star.y}%`,
-          width: `${star.size}px`,
-          height: `${star.size}px`
-        }}
-      />
-    ));
-
-    const connections = constellation.connections.map((connection, lineIndex) => {
-      const [start, end] = connection;
-      const startStar = constellation.stars[start];
-      const endStar = constellation.stars[end];
-
-      const deltaX = endStar.x - startStar.x;
-      const deltaY = endStar.y - startStar.y;
-      const length = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-      const angle = Math.atan2(deltaY, deltaX) * 180 / Math.PI;
-
-      return (
-        <div
-          key={`${constellation.name}-line-${lineIndex}`}
-          className={`constellation-line ${constellation.name}-line`}
-          style={{
-            left: `${startStar.x}%`,
-            top: `${startStar.y}%`,
-            width: `${length}%`,
-            transform: `rotate(${angle}deg)`,
-            transformOrigin: '0 50%'
-          }}
-        />
-      );
-    });
-
-    return (
-      <div key={constellation.name} className={`constellation ${constellation.name}`}>
-        {stars}
-        {connections}
-      </div>
-    );
-  });
-
-  // Call generateStarField to create the stars array
   const stars = generateStarField();
 
   return (
@@ -206,16 +41,182 @@ const BackgroundScene: React.FC = () => {
           background: linear-gradient(
             to bottom,
             #0d1b2a 0%,
-            #1b2951 30%,
-            #415a77 60%,
-            #778da9 80%,
-            #e0e1dd 100%
+            #1b2951 20%,
+            #2c3e50 40%,
+            #34495e 55%,
+            #e67e22 70%,
+            #f39c12 80%,
+            #f1c40f 90%,
+            #fff3cd 100%
           );
           overflow: hidden;
           z-index: -1;
         }
 
-        /* Estrellas */
+        /* Sun */
+        .sun {
+          position: absolute;
+          bottom: 25%;
+          right: 15%;
+          width: 120px;
+          height: 120px;
+          background: radial-gradient(
+            circle,
+            #fff8dc 0%,
+            #ffd700 20%,
+            #ff8c00 40%,
+            #ff6347 70%,
+            #ff4500 100%
+          );
+          border-radius: 50%;
+          box-shadow: 
+            0 0 50px rgba(255, 215, 0, 0.8),
+            0 0 100px rgba(255, 140, 0, 0.6),
+            0 0 150px rgba(255, 69, 0, 0.4),
+            0 0 200px rgba(255, 99, 71, 0.2);
+          animation: sun-pulse 4s ease-in-out infinite alternate;
+          z-index: 5;
+        }
+
+        @keyframes sun-pulse {
+          0% { 
+            transform: scale(1);
+            box-shadow: 
+              0 0 50px rgba(255, 215, 0, 0.8),
+              0 0 100px rgba(255, 140, 0, 0.6),
+              0 0 150px rgba(255, 69, 0, 0.4),
+              0 0 200px rgba(255, 99, 71, 0.2);
+          }
+          100% { 
+            transform: scale(1.05);
+            box-shadow: 
+              0 0 60px rgba(255, 215, 0, 0.9),
+              0 0 120px rgba(255, 140, 0, 0.7),
+              0 0 180px rgba(255, 69, 0, 0.5),
+              0 0 240px rgba(255, 99, 71, 0.3);
+          }
+        }
+
+        /* Sun rays */
+        .sun-rays {
+          position: absolute;
+          bottom: 25%;
+          right: 15%;
+          width: 120px;
+          height: 120px;
+          z-index: 4;
+        }
+
+        .sun-ray {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          width: 2px;
+          height: 80px;
+          background: linear-gradient(
+            to top,
+            rgba(255, 215, 0, 0.8) 0%,
+            rgba(255, 140, 0, 0.4) 50%,
+            transparent 100%
+          );
+          transform-origin: bottom center;
+          animation: ray-rotate 20s linear infinite;
+        }
+
+        .sun-ray:nth-child(1) { transform: translate(-50%, -50%) rotate(0deg); }
+        .sun-ray:nth-child(2) { transform: translate(-50%, -50%) rotate(30deg); }
+        .sun-ray:nth-child(3) { transform: translate(-50%, -50%) rotate(60deg); }
+        .sun-ray:nth-child(4) { transform: translate(-50%, -50%) rotate(90deg); }
+        .sun-ray:nth-child(5) { transform: translate(-50%, -50%) rotate(120deg); }
+        .sun-ray:nth-child(6) { transform: translate(-50%, -50%) rotate(150deg); }
+        .sun-ray:nth-child(7) { transform: translate(-50%, -50%) rotate(180deg); }
+        .sun-ray:nth-child(8) { transform: translate(-50%, -50%) rotate(210deg); }
+        .sun-ray:nth-child(9) { transform: translate(-50%, -50%) rotate(240deg); }
+        .sun-ray:nth-child(10) { transform: translate(-50%, -50%) rotate(270deg); }
+        .sun-ray:nth-child(11) { transform: translate(-50%, -50%) rotate(300deg); }
+        .sun-ray:nth-child(12) { transform: translate(-50%, -50%) rotate(330deg); }
+
+        @keyframes ray-rotate {
+          from { transform: translate(-50%, -50%) rotate(0deg); }
+          to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        /* Enhanced sunrise glow */
+        .sunrise-glow {
+          position: absolute;
+          bottom: 0;
+          right: 0;
+          width: 60%;
+          height: 50%;
+          background: radial-gradient(
+            ellipse at bottom right,
+            rgba(255, 215, 0, 0.4) 0%,
+            rgba(255, 140, 0, 0.3) 20%,
+            rgba(255, 69, 0, 0.2) 40%,
+            rgba(255, 99, 71, 0.1) 60%,
+            transparent 80%
+          );
+          z-index: 1;
+          animation: glow-pulse 6s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow-pulse {
+          0% { opacity: 0.6; }
+          100% { opacity: 1; }
+        }
+
+        /* Atmospheric light rays */
+        .atmospheric-rays {
+          position: absolute;
+          bottom: 20%;
+          right: 10%;
+          width: 300px;
+          height: 200px;
+          z-index: 2;
+        }
+
+        .light-beam {
+          position: absolute;
+          bottom: 0;
+          right: 50px;
+          width: 3px;
+          height: 150px;
+          background: linear-gradient(
+            to top,
+            rgba(255, 215, 0, 0.6) 0%,
+            rgba(255, 140, 0, 0.3) 50%,
+            transparent 100%
+          );
+          transform-origin: bottom center;
+          animation: beam-sway 8s ease-in-out infinite;
+        }
+
+        .light-beam:nth-child(1) { 
+          transform: rotate(-15deg);
+          animation-delay: 0s;
+        }
+        .light-beam:nth-child(2) { 
+          transform: rotate(-5deg);
+          animation-delay: 1s;
+          right: 80px;
+        }
+        .light-beam:nth-child(3) { 
+          transform: rotate(5deg);
+          animation-delay: 2s;
+          right: 20px;
+        }
+        .light-beam:nth-child(4) { 
+          transform: rotate(15deg);
+          animation-delay: 3s;
+          right: 110px;
+        }
+
+        @keyframes beam-sway {
+          0%, 100% { opacity: 0.4; }
+          50% { opacity: 0.8; }
+        }
+
+        /* Stars */
         .stars {
           position: absolute;
           top: 0;
@@ -234,257 +235,6 @@ const BackgroundScene: React.FC = () => {
         @keyframes twinkle {
           0% { opacity: 0.3; }
           100% { opacity: 1; }
-        }
-
-        /* Montañas */
-        .mountains {
-          position: absolute;
-          bottom: 0;
-          left: 0;
-          width: 100%;
-          height: 60%; /* 1.5x 40% */
-          z-index: 1;
-        }
-
-        .mountain {
-          position: absolute;
-          bottom: 0;
-        }
-
-        .mountain-1 {
-          left: 0;
-          width: 0;
-          height: 0;
-          border-left: 300px solid transparent; /* 1.5x 200px */
-          border-right: 450px solid transparent; /* 1.5x 300px */
-          border-bottom: 420px solid rgba(25, 25, 112, 0.8); /* 1.5x 280px */
-        }
-
-        .mountain-2 {
-          left: 30%;
-          width: 0;
-          height: 0;
-          border-left: 270px solid transparent; /* 1.5x 180px */
-          border-right: 375px solid transparent; /* 1.5x 250px */
-          border-bottom: 480px solid rgba(25, 25, 112, 0.9); /* 1.5x 320px */
-        }
-
-        .mountain-3 {
-          right: 0;
-          width: 0;
-          height: 0;
-          border-left: 330px solid transparent; /* 1.5x 220px */
-          border-right: 270px solid transparent; /* 1.5x 180px */
-          border-bottom: 450px solid rgba(25, 25, 112, 0.7); /* 1.5x 300px */
-        }
-
-        /* Gradiente del horizonte */
-        .horizon-gradient {
-          position: absolute;
-          bottom: 0;
-          left: 0;
-          width: 100%;
-          height: 300px; /* 1.5x 200px */
-          background: linear-gradient(
-            to top,
-            rgba(255, 165, 0, 0.3) 0%,
-            rgba(255, 69, 0, 0.2) 30%,
-            rgba(147, 0, 211, 0.1) 70%,
-            transparent 100%
-          );
-          z-index: 0;
-        }
-
-        /* Nubes atmosféricas */
-        .cloud {
-          position: absolute;
-          width: 120px;
-          height: 40px;
-          background: rgba(255, 255, 255, 0.1);
-          border-radius: 40px;
-          animation: cloud-drift 60s linear infinite;
-          filter: blur(1px);
-          z-index: 10;
-        }
-
-        .cloud::before {
-          content: '';
-          position: absolute;
-          top: -15px;
-          left: 20px;
-          width: 50px;
-          height: 50px;
-          background: rgba(255, 255, 255, 0.08);
-          border-radius: 50%;
-        }
-
-        .cloud::after {
-          content: '';
-          position: absolute;
-          top: -10px;
-          right: 15px;
-          width: 40px;
-          height: 40px;
-          background: rgba(255, 255, 255, 0.06);
-          border-radius: 50%;
-        }
-
-        /* Constelaciones incas */
-        .constellation {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          z-index: 5;
-        }
-
-        .constellation-star {
-          position: absolute;
-          background: radial-gradient(circle, rgba(255, 215, 0, 1) 0%, rgba(255, 235, 59, 0.8) 40%, rgba(255, 193, 7, 0.4) 100%);
-          border-radius: 50%;
-          animation: inca-star-glow 4s ease-in-out infinite alternate;
-          box-shadow: 
-            0 0 8px rgba(255, 215, 0, 0.8),
-            0 0 16px rgba(255, 235, 59, 0.4),
-            0 0 24px rgba(255, 193, 7, 0.2);
-        }
-
-        .constellation-line {
-          position: absolute;
-          height: 1px;
-          background: linear-gradient(to right, 
-            rgba(255, 215, 0, 0.8) 0%, 
-            rgba(255, 235, 59, 0.6) 50%, 
-            rgba(255, 215, 0, 0.8) 100%
-          );
-          animation: inca-line-pulse 6s ease-in-out infinite;
-          box-shadow: 0 0 4px rgba(255, 215, 0, 0.5);
-        }
-
-        .chakana .constellation-star {
-          background: radial-gradient(circle, rgba(255, 255, 255, 1) 0%, rgba(255, 215, 0, 0.9) 30%, rgba(255, 193, 7, 0.5) 100%);
-          box-shadow: 
-            0 0 12px rgba(255, 255, 255, 0.8),
-            0 0 24px rgba(255, 215, 0, 0.6),
-            0 0 36px rgba(255, 193, 7, 0.3);
-          animation: chakana-sacred-glow 3s ease-in-out infinite alternate;
-        }
-
-        .chakana .constellation-line {
-          background: linear-gradient(to right, 
-            rgba(255, 255, 255, 0.9) 0%, 
-            rgba(255, 215, 0, 0.8) 50%, 
-            rgba(255, 255, 255, 0.9) 100%
-          );
-          height: 1.5px;
-          box-shadow: 
-            0 0 6px rgba(255, 255, 255, 0.7),
-            0 0 12px rgba(255, 215, 0, 0.5);
-        }
-
-        .llama .constellation-star {
-          background: radial-gradient(circle, rgba(160, 132, 92, 1) 0%, rgba(139, 111, 71, 0.8) 50%, rgba(101, 67, 33, 0.4) 100%);
-          box-shadow: 
-            0 0 8px rgba(160, 132, 92, 0.6),
-            0 0 16px rgba(139, 111, 71, 0.3);
-          animation: llama-earth-glow 5s ease-in-out infinite alternate;
-        }
-
-        .llama .constellation-line {
-          background: linear-gradient(to right, 
-            rgba(160, 132, 92, 0.7) 0%, 
-            rgba(139, 111, 71, 0.8) 50%, 
-            rgba(160, 132, 92, 0.7) 100%
-          );
-          box-shadow: 0 0 4px rgba(139, 111, 71, 0.4);
-        }
-
-        .condor .constellation-star {
-          background: radial-gradient(circle, rgba(173, 216, 230, 1) 0%, rgba(135, 206, 235, 0.8) 40%, rgba(70, 130, 180, 0.4) 100%);
-          box-shadow: 
-            0 0 10px rgba(173, 216, 230, 0.7),
-            0 0 20px rgba(135, 206, 235, 0.4);
-          animation: condor-sky-glow 4s ease-in-out infinite alternate;
-        }
-
-        .condor .constellation-line {
-          background: linear-gradient(to right, 
-            rgba(173, 216, 230, 0.8) 0%, 
-            rgba(135, 206, 235, 0.9) 50%, 
-            rgba(173, 216, 230, 0.8) 100%
-          );
-          box-shadow: 0 0 5px rgba(135, 206, 235, 0.5);
-        }
-
-        .partridge .constellation-star {
-          background: radial-gradient(circle, rgba(255, 182, 193, 1) 0%, rgba(255, 160, 122, 0.8) 50%, rgba(205, 92, 92, 0.4) 100%);
-          box-shadow: 
-            0 0 6px rgba(255, 182, 193, 0.6),
-            0 0 12px rgba(255, 160, 122, 0.3);
-          animation: partridge-gentle-glow 6s ease-in-out infinite alternate;
-        }
-
-        .partridge .constellation-line {
-          background: linear-gradient(to right, 
-            rgba(255, 182, 193, 0.6) 0%, 
-            rgba(255, 160, 122, 0.7) 50%, 
-            rgba(255, 182, 193, 0.6) 100%
-          );
-          box-shadow: 0 0 3px rgba(255, 160, 122, 0.4);
-        }
-
-        .serpent .constellation-star {
-          background: radial-gradient(circle, rgba(152, 251, 152, 1) 0%, rgba(144, 238, 144, 0.8) 40%, rgba(34, 139, 34, 0.4) 100%);
-          box-shadow: 
-            0 0 8px rgba(152, 251, 152, 0.6),
-            0 0 16px rgba(144, 238, 144, 0.3);
-          animation: serpent-nature-glow 7s ease-in-out infinite alternate;
-        }
-
-        .serpent .constellation-line {
-          background: linear-gradient(to right, 
-            rgba(152, 251, 152, 0.7) 0%, 
-            rgba(144, 238, 144, 0.8) 50%, 
-            rgba(152, 251, 152, 0.7) 100%
-          );
-          box-shadow: 0 0 4px rgba(144, 238, 144, 0.4);
-        }
-
-        /* Animaciones específicas para constelaciones incas */
-        @keyframes inca-star-glow {
-          0% { opacity: 0.7; transform: scale(0.9); }
-          100% { opacity: 1; transform: scale(1.1); }
-        }
-
-        @keyframes inca-line-pulse {
-          0%, 100% { opacity: 0.4; }
-          50% { opacity: 0.8; }
-        }
-
-        @keyframes chakana-sacred-glow {
-          0% { opacity: 0.8; transform: scale(1); }
-          100% { opacity: 1; transform: scale(1.2); }
-        }
-
-        @keyframes llama-earth-glow {
-          0% { opacity: 0.6; transform: scale(0.95); }
-          100% { opacity: 0.9; transform: scale(1.05); }
-        }
-
-        @keyframes condor-sky-glow {
-          0% { opacity: 0.7; transform: scale(0.9) rotate(0deg); }
-          100% { opacity: 1; transform: scale(1.1) rotate(5deg); }
-        }
-
-        @keyframes partridge-gentle-glow {
-          0% { opacity: 0.5; transform: scale(0.9); }
-          100% { opacity: 0.8; transform: scale(1.05); }
-        }
-
-        @keyframes serpent-nature-glow {
-          0% { opacity: 0.6; transform: scale(0.95) rotateZ(0deg); }
-          100% { opacity: 0.9; transform: scale(1.05) rotateZ(2deg); }
         }
 
         /* Caballito de totora con cóndor */
@@ -715,35 +465,6 @@ const BackgroundScene: React.FC = () => {
           opacity: 0.95;
         }
 
-        .totora-boat::after {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          background: 
-            repeating-linear-gradient(25deg, 
-              transparent 0px, 
-              rgba(205, 133, 63, 0.2) 0.75px, 
-              transparent 1.5px, 
-              transparent 6px
-            ),
-            repeating-linear-gradient(-25deg, 
-              transparent 0px, 
-              rgba(255, 215, 0, 0.15) 0.75px, 
-              transparent 1.5px, 
-              transparent 6px
-            ),
-            repeating-linear-gradient(90deg, 
-              transparent 0px, 
-              rgba(244, 164, 96, 0.1) 1.5px, 
-              transparent 3px, 
-              transparent 7.5px
-            );
-          border-radius: 0 90px 90px 0;
-        }
-
         .boat-prow {
           position: absolute;
           top: -37.5px;
@@ -767,25 +488,6 @@ const BackgroundScene: React.FC = () => {
             0 0 37.5px rgba(255, 235, 59, 0.3),
             inset 4.5px 0 15px rgba(255, 248, 220, 0.4),
             inset -1.5px 0 9px rgba(184, 134, 11, 0.5);
-        }
-
-        .boat-prow::before {
-          content: '';
-          position: absolute;
-          top: 12px;
-          left: 4.5px;
-          width: 21px;
-          height: 51px;
-          background: 
-            repeating-linear-gradient(5deg, 
-              rgba(255, 215, 0, 0.8) 0px, 
-              rgba(255, 235, 59, 0.6) 1.5px, 
-              rgba(255, 248, 220, 0.4) 3px,
-              rgba(244, 164, 96, 0.3) 4.5px,
-              transparent 6px
-            );
-          border-radius: 30%;
-          opacity: 0.9;
         }
 
         .boat-stern {
@@ -812,110 +514,6 @@ const BackgroundScene: React.FC = () => {
             inset 1.5px 0 9px rgba(184, 134, 11, 0.5);
         }
 
-        .boat-stern::before {
-          content: '';
-          position: absolute;
-          top: 9px;
-          left: 3px;
-          width: 21px;
-          height: 42px;
-          background: 
-            repeating-linear-gradient(-5deg, 
-              rgba(255, 215, 0, 0.7) 0px, 
-              rgba(255, 235, 59, 0.5) 1.5px, 
-              rgba(255, 248, 220, 0.3) 3px,
-              rgba(244, 164, 96, 0.2) 4.5px,
-              transparent 6px
-            );
-          border-radius: 40%;
-          opacity: 0.8;
-        }
-
-        .totora-bindings {
-          position: absolute;
-          top: 9px;
-          left: 30px;
-          width: 135px;
-          height: 2.25px;
-          background: linear-gradient(90deg, 
-            rgba(139, 69, 19, 0.9) 0%,
-            rgba(160, 82, 45, 0.8) 50%,
-            rgba(139, 69, 19, 0.9) 100%
-          );
-          border-radius: 1.5px;
-          box-shadow: 
-            0 0 6px rgba(139, 69, 19, 0.5),
-            0 1.5px 3px rgba(0, 0, 0, 0.3),
-            0 0 12px rgba(160, 82, 45, 0.3);
-        }
-
-        .totora-bindings::before {
-          content: '';
-          position: absolute;
-          top: 6px;
-          left: 7.5px;
-          width: 120px;
-          height: 2.25px;
-          background: linear-gradient(90deg, 
-            rgba(139, 69, 19, 0.8) 0%,
-            rgba(160, 82, 45, 0.7) 50%,
-            rgba(139, 69, 19, 0.8) 100%
-          );
-          border-radius: 1.5px;
-          box-shadow: 0 0 4.5px rgba(139, 69, 19, 0.4);
-        }
-
-        .totora-bindings::after {
-          content: '';
-          position: absolute;
-          top: -6px;
-          left: 15px;
-          width: 105px;
-          height: 2.25px;
-          background: linear-gradient(90deg, 
-            rgba(139, 69, 19, 0.7) 0%,
-            rgba(160, 82, 45, 0.6) 50%,
-            rgba(139, 69, 19, 0.7) 100%
-          );
-          border-radius: 1.5px;
-          box-shadow: 0 0 3px rgba(139, 69, 19, 0.3);
-        }
-
-        .totora-surface {
-          position: absolute;
-          top: 3px;
-          left: 22.5px;
-          width: 150px;
-          height: 21px;
-          background: 
-            radial-gradient(ellipse at center, 
-              rgba(255, 248, 220, 0.4) 0%, 
-              rgba(255, 235, 59, 0.3) 30%, 
-              rgba(255, 215, 0, 0.2) 60%, 
-              rgba(244, 164, 96, 0.1) 80%,
-              transparent 100%
-            );
-          border-radius: 75px;
-          opacity: 0.7;
-        }
-
-        .totora-shine {
-          position: absolute;
-          top: 4.5px;
-          left: 37.5px;
-          width: 120px;
-          height: 7.5px;
-          background: linear-gradient(90deg, 
-            transparent 0%,
-            rgba(255, 248, 220, 0.6) 20%,
-            rgba(255, 255, 255, 0.4) 50%,
-            rgba(255, 248, 220, 0.6) 80%,
-            transparent 100%
-          );
-          border-radius: 30px;
-          animation: golden-shimmer 4s ease-in-out infinite;
-        }
-
         .mystical-propulsion {
           position: absolute;
           bottom: -22.5px;
@@ -936,52 +534,10 @@ const BackgroundScene: React.FC = () => {
             0 0 75px rgba(30, 144, 255, 0.2);
         }
 
-        .wake-container {
-          position: absolute;
-          top: 50%;
-          right: 100%;
-          transform: translateY(-50%);
-          width: 675px;
-          height: 120px;
-          pointer-events: none;
-        }
-
-        .wake-particle {
-          position: absolute;
-          width: 12px;
-          height: 12px;
-          background: radial-gradient(circle, 
-            rgba(173, 216, 230, 0.9) 0%, 
-            rgba(135, 206, 235, 0.6) 50%, 
-            rgba(70, 130, 180, 0.3) 100%
-          );
-          border-radius: 50%;
-          animation: wake-flow 2s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite;
-          box-shadow: 
-            0 0 22.5px rgba(173, 216, 230, 0.5),
-            0 0 45px rgba(135, 206, 235, 0.2);
-        }
-
         /* Animaciones */
-        @keyframes golden-shimmer {
-          0%, 100% { opacity: 0.3; }
-          50% { opacity: 0.7; }
-        }
-
         @keyframes mystical-glow {
           0%, 100% { opacity: 0.8; transform: scale(1.1); }
           50% { opacity: 1; transform: scale(1.2); }
-        }
-
-        @keyframes wake-flow {
-          0% { 
-            transform: translate(0px, 0px) scale(1);
-            opacity: 1;
-          }
-          100% { 
-            transform: translate(-450px, 22.5px) scale(0.1);
-            opacity: 0;
-          }
         }
 
         @keyframes condor-soaring {
@@ -1010,62 +566,14 @@ const BackgroundScene: React.FC = () => {
             transform: translateX(140vw) translateY(0px) rotateZ(0deg);
             filter: drop-shadow(0 0 37.5px rgba(255, 140, 0, 0.3));
           }
-          5% { 
-            transform: translateX(120vw) translateY(-22.5px) rotateZ(-2deg);
-          }
-          10% { 
-            transform: translateX(105vw) translateY(-45px) rotateZ(-4deg);
-          }
-          15% { 
-            transform: translateX(90vw) translateY(-37.5px) rotateZ(-3deg);
-          }
-          20% { 
-            transform: translateX(78vw) translateY(-60px) rotateZ(-5deg);
-          }
           25% { 
-            transform: translateX(66vw) translateY(-52.5px) rotateZ(-4deg);
-          }
-          30% { 
-            transform: translateX(56vw) translateY(-30px) rotateZ(-2deg);
-          }
-          35% { 
-            transform: translateX(47vw) translateY(-15px) rotateZ(-1deg);
-          }
-          40% { 
-            transform: translateX(38vw) translateY(7.5px) rotateZ(1deg);
-          }
-          45% { 
-            transform: translateX(30vw) translateY(22.5px) rotateZ(3deg);
+            transform: translateX(78vw) translateY(-60px) rotateZ(-5deg);
           }
           50% { 
             transform: translateX(23vw) translateY(37.5px) rotateZ(4deg);
           }
-          55% { 
-            transform: translateX(17vw) translateY(30px) rotateZ(3deg);
-          }
-          60% { 
-            transform: translateX(12vw) translateY(15px) rotateZ(2deg);
-          }
-          65% { 
-            transform: translateX(7vw) translateY(-7.5px) rotateZ(0deg);
-          }
-          70% { 
-            transform: translateX(3vw) translateY(-22.5px) rotateZ(-2deg);
-          }
           75% { 
             transform: translateX(-1vw) translateY(-37.5px) rotateZ(-4deg);
-          }
-          80% { 
-            transform: translateX(-4vw) translateY(-52.5px) rotateZ(-5deg);
-          }
-          85% { 
-            transform: translateX(-7vw) translateY(-60px) rotateZ(-6deg);
-          }
-          90% { 
-            transform: translateX(-10vw) translateY(-52.5px) rotateZ(-5deg);
-          }
-          95% { 
-            transform: translateX(-12vw) translateY(-30px) rotateZ(-3deg);
           }
           100% { 
             transform: translateX(-15vw) translateY(0px) rotateZ(0deg);
@@ -1082,23 +590,194 @@ const BackgroundScene: React.FC = () => {
           }
         }
 
+        /* Montañas */
+        .mountains {
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          width: 100%;
+          height: 40%;
+          z-index: 3;
+        }
+
+        .mountain {
+          position: absolute;
+          bottom: 0;
+        }
+
+        .mountain-1 {
+          left: 0;
+          width: 0;
+          height: 0;
+          border-left: 200px solid transparent;
+          border-right: 300px solid transparent;
+          border-bottom: 280px solid rgba(25, 25, 112, 0.9);
+        }
+
+        .mountain-2 {
+          left: 30%;
+          width: 0;
+          height: 0;
+          border-left: 180px solid transparent;
+          border-right: 250px solid transparent;
+          border-bottom: 320px solid rgba(25, 25, 112, 0.95);
+        }
+
+        .mountain-3 {
+          right: 0;
+          width: 0;
+          height: 0;
+          border-left: 220px solid transparent;
+          border-right: 180px solid transparent;
+          border-bottom: 300px solid rgba(25, 25, 112, 0.85);
+        }
+
+        /* Enhanced horizon gradient */
+        .horizon-gradient {
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          width: 100%;
+          height: 300px;
+          background: linear-gradient(
+            to top,
+            rgba(255, 215, 0, 0.4) 0%,
+            rgba(255, 140, 0, 0.3) 20%,
+            rgba(255, 69, 0, 0.2) 40%,
+            rgba(255, 99, 71, 0.1) 60%,
+            rgba(147, 0, 211, 0.05) 80%,
+            transparent 100%
+          );
+          z-index: 0;
+        }
+
+        /* Morning clouds */
+        .morning-clouds {
+          position: absolute;
+          top: 30%;
+          left: 0;
+          width: 100%;
+          height: 40%;
+          z-index: 6;
+        }
+
+        .cloud {
+          position: absolute;
+          background: rgba(255, 255, 255, 0.6);
+          border-radius: 50px;
+          animation: cloud-drift 40s linear infinite;
+        }
+
+        .cloud::before,
+        .cloud::after {
+          content: '';
+          position: absolute;
+          background: rgba(255, 255, 255, 0.4);
+          border-radius: 50%;
+        }
+
+        .cloud-1 {
+          width: 80px;
+          height: 30px;
+          top: 20%;
+          left: 10%;
+          animation-delay: 0s;
+        }
+
+        .cloud-1::before {
+          width: 40px;
+          height: 40px;
+          top: -15px;
+          left: 10px;
+        }
+
+        .cloud-1::after {
+          width: 30px;
+          height: 30px;
+          top: -10px;
+          right: 10px;
+        }
+
+        .cloud-2 {
+          width: 100px;
+          height: 40px;
+          top: 10%;
+          right: 20%;
+          animation-delay: 10s;
+        }
+
+        .cloud-2::before {
+          width: 50px;
+          height: 50px;
+          top: -20px;
+          left: 15px;
+        }
+
+        .cloud-2::after {
+          width: 35px;
+          height: 35px;
+          top: -15px;
+          right: 15px;
+        }
+
         @keyframes cloud-drift {
-          from { transform: translateX(-100vw); }
-          to { transform: translateX(100vw); }
+          from { transform: translateX(-200px); }
+          to { transform: translateX(calc(100vw + 200px)); }
         }
       `}</style>
 
+      {/* Sunrise glow behind mountains */}
+      <div className="sunrise-glow"></div>
+      
+      {/* Enhanced horizon gradient */}
       <div className="horizon-gradient"></div>
+      
+      {/* Sun */}
+      <div className="sun"></div>
+      
+      {/* Sun rays */}
+      <div className="sun-rays">
+        <div className="sun-ray"></div>
+        <div className="sun-ray"></div>
+        <div className="sun-ray"></div>
+        <div className="sun-ray"></div>
+        <div className="sun-ray"></div>
+        <div className="sun-ray"></div>
+        <div className="sun-ray"></div>
+        <div className="sun-ray"></div>
+        <div className="sun-ray"></div>
+        <div className="sun-ray"></div>
+        <div className="sun-ray"></div>
+        <div className="sun-ray"></div>
+      </div>
+
+      {/* Atmospheric light beams */}
+      <div className="atmospheric-rays">
+        <div className="light-beam"></div>
+        <div className="light-beam"></div>
+        <div className="light-beam"></div>
+        <div className="light-beam"></div>
+      </div>
+
+      {/* Mountains */}
       <div className="mountains">
         <div className="mountain mountain-1"></div>
         <div className="mountain mountain-2"></div>
         <div className="mountain mountain-3"></div>
       </div>
+
+      {/* Stars */}
       <div className="stars">
         {stars}
       </div>
-      {constellationElements}
-      {clouds}
+
+      {/* Morning clouds */}
+      <div className="morning-clouds">
+        <div className="cloud cloud-1"></div>
+        <div className="cloud cloud-2"></div>
+      </div>
+
+      {/* Caballito de totora con cóndor */}
       <div className="totora-rider">
         <div className="rider-container">
           <div className="condor">
@@ -1119,14 +798,8 @@ const BackgroundScene: React.FC = () => {
           <div className="totora-boat">
             <div className="boat-prow"></div>
             <div className="boat-stern"></div>
-            <div className="totora-bindings"></div>
-            <div className="totora-surface"></div>
-            <div className="totora-shine"></div>
           </div>
           <div className="mystical-propulsion"></div>
-        </div>
-        <div className="wake-container">
-          {wakeParticles}
         </div>
       </div>
     </div>
