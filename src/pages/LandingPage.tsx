@@ -5,7 +5,6 @@ import AstronautPanel from "../components/ui/AstronautPanel";
 import LoginPanel from "../components/ui/LoginPanel";
 import MissionNewsPanel from "../components/ui/MissionNewsPanel";
 import CreateAccountButton from "../components/ui/CreateAccountButton";
-import CosmicCadetForm from "../components/ui/CosmicCadetForm";
 import type { LoginFormData, Mission } from "../types";
 import "./LandingPage.css";
 
@@ -16,16 +15,8 @@ const isDevelopment =
 const LandingPage: React.FC = () => {
   const [selectedAstronaut, setSelectedAstronaut] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [currentView, setCurrentView] = useState<"login" | "register">("login");
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
-
-  // Debug logs solo en desarrollo
-  useEffect(() => {
-    if (isDevelopment) {
-      console.log("currentView cambió a:", currentView);
-    }
-  }, [currentView]);
 
   // Limpiar errores después de 5 segundos
   useEffect(() => {
@@ -92,70 +83,24 @@ const LandingPage: React.FC = () => {
     }
   };
 
+  // ✅ FUNCIÓN MODIFICADA: Ahora navega a /register
   const handleCreateAccount = (): void => {
     if (isDevelopment) {
-      console.log("handleCreateAccount llamado");
-      console.log("Estado actual antes del cambio:", currentView);
+      console.log("handleCreateAccount llamado - navegando a /register");
     }
 
     try {
-      setCurrentView("register");
       setError(null);
+      navigate("/register");
+      
       if (isDevelopment) {
-        console.log('setCurrentView("register") ejecutado.');
+        console.log("Navegación a /register ejecutada");
       }
     } catch (err: unknown) {
       const errorMessage =
         err instanceof Error ? err.message : "Error desconocido";
       console.error("Error navigating to register:", err);
       setError("Error al navegar al registro: " + errorMessage);
-    }
-  };
-
-  const handleBackToLogin = (): void => {
-    if (isDevelopment) {
-      console.log('handleBackToLogin llamado. Cambiando a vista "login".');
-    }
-    try {
-      setCurrentView("login");
-      setError(null);
-      if (isDevelopment) {
-        console.log('setCurrentView("login") ejecutado.');
-      }
-    } catch (err: unknown) {
-      const errorMessage =
-        err instanceof Error ? err.message : "Error desconocido";
-      console.error("Error navigating back to login:", err);
-      setError("Error al regresar al login: " + errorMessage);
-    }
-  };
-
-  const handleRegisterSubmit = async (formData: any): Promise<void> => {
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      if (isDevelopment) {
-        console.log("handleRegisterSubmit llamado.");
-        console.log("Datos de registro recibidos:", formData);
-      }
-
-      // Simular llamada a API de registro
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-
-      // Después del registro exitoso, regresar al login
-      setCurrentView("login");
-
-      if (isDevelopment) {
-        console.log("Registro completado, regresando al login");
-      }
-    } catch (err: unknown) {
-      const errorMessage =
-        err instanceof Error ? err.message : "Error al procesar el registro";
-      console.error("Error processing registration:", err);
-      setError(errorMessage);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -188,45 +133,17 @@ const LandingPage: React.FC = () => {
       <div className="loading-overlay">
         <div className="loading-spinner-large">
           <div className="spinner-ring"></div>
-          <div className="loading-text">
-            {currentView === "register"
-              ? "Creando cuenta..."
-              : "Iniciando sesión..."}
-          </div>
+          <div className="loading-text">Iniciando sesión...</div>
         </div>
       </div>
     );
   };
 
-  // Debug en desarrollo
-  if (isDevelopment) {
-    console.log("Renderizando con currentView:", currentView);
-  }
-
-  // Renderizado condicional con manejo de errores
+  // Renderizado principal - Solo vista de login
   try {
-    if (currentView === "register") {
-      if (isDevelopment) {
-        console.log("Renderizando vista de REGISTRO");
-      }
-      return (
-        <div className="landing-page landing-page--register">
-          {renderErrorNotification()}
-          {renderLoadingOverlay()}
-
-          <CosmicCadetForm
-            onSubmit={handleRegisterSubmit}
-            onBackToLogin={handleBackToLogin}
-          />
-        </div>
-      );
-    }
-
     if (isDevelopment) {
       console.log("Renderizando vista de LOGIN");
     }
-
-    // En tu return del componente LandingPage, cambia esta parte:
 
     return (
       <div className="landing-page">
@@ -244,17 +161,11 @@ const LandingPage: React.FC = () => {
 
             <div className="center-panel">
               <LoginPanel onLogin={handleLogin} />
-              {/* ⬇️ MUEVE EL BOTÓN AQUÍ */}
               <CreateAccountButton onClick={handleCreateAccount} />
             </div>
 
             <MissionNewsPanel onMissionClick={handleMissionClick} />
           </div>
-
-          {/* ⬇️ ELIMINA ESTA SECCIÓN COMPLETA */}
-          {/* <div className="bottom-section">
-        <CreateAccountButton onClick={handleCreateAccount} />
-      </div> */}
         </div>
       </div>
     );

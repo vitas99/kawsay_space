@@ -1,3 +1,5 @@
+// types/index.ts - Definición de tipos para la aplicación
+
 // Tipos para los astronautas
 export interface Astronaut {
   id: number;
@@ -241,3 +243,19 @@ export const DEFAULT_ANIMATION_DURATION = 300;
 export const DEFAULT_USER_NAME = "Futuro Explorador";
 export const MAX_STARS_COUNT = 500;
 export const MIN_STARS_COUNT = 50;
+
+// Tipos para autenticación (compatibilidad hacia atrás)
+export interface User {
+  id: string;
+  username: string;
+  email: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface AuthState {
+  user: User | null;
+  isAuthenticated: boolean;
+  isLoading: boolean;
+  error: string | null;
+}
