@@ -40,14 +40,14 @@ const BackgroundScene = () => {
           height: 100vh;
           background: linear-gradient(
             to bottom,
-            #0d1b2a 0%,
-            #1b2951 20%,
-            #2c3e50 40%,
-            #34495e 55%,
-            #e67e22 70%,
-            #f39c12 80%,
-            #f1c40f 90%,
-            #fff3cd 100%
+            #0c1220 0%,
+            #1a202c 20%,
+            #2d1b69 40%,
+            #5b21b6 55%,
+            #7c2d12 65%,
+            #f59e0b 80%,
+            #fbbf24 90%,
+            #fef3c7 100%
           );
           overflow: hidden;
           z-index: -1;
@@ -57,7 +57,7 @@ const BackgroundScene = () => {
         .sun {
           position: absolute;
           bottom: 25%;
-          right: 15%;
+          right: 8%;
           width: 120px;
           height: 120px;
           background: radial-gradient(
@@ -101,7 +101,7 @@ const BackgroundScene = () => {
         .sun-rays {
           position: absolute;
           bottom: 25%;
-          right: 15%;
+          right: 8%;
           width: 120px;
           height: 120px;
           z-index: 4;
@@ -534,6 +534,158 @@ const BackgroundScene = () => {
             0 0 75px rgba(30, 144, 255, 0.2);
         }
 
+        /* Propulsores espaciales */
+        .space-thrusters {
+          position: absolute;
+          bottom: -45px;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 180px;
+          height: 60px;
+          z-index: 16;
+        }
+
+        .thruster {
+          position: absolute;
+          bottom: 0;
+          width: 15px;
+          height: 45px;
+          background: linear-gradient(
+            to bottom,
+            rgba(0, 150, 255, 0.9) 0%,
+            rgba(0, 200, 255, 0.8) 20%,
+            rgba(255, 255, 255, 0.9) 40%,
+            rgba(0, 255, 255, 0.7) 70%,
+            transparent 100%
+          );
+          border-radius: 50% 50% 0 0;
+          animation: thruster-flame 0.3s ease-in-out infinite alternate;
+          box-shadow: 
+            0 0 25px rgba(0, 200, 255, 0.8),
+            0 0 50px rgba(0, 255, 255, 0.4);
+        }
+
+        .thruster-left {
+          left: 30px;
+          animation-delay: 0s;
+        }
+
+        .thruster-center-left {
+          left: 60px;
+          animation-delay: 0.1s;
+          height: 50px;
+        }
+
+        .thruster-center-right {
+          right: 60px;
+          animation-delay: 0.2s;
+          height: 50px;
+        }
+
+        .thruster-right {
+          right: 30px;
+          animation-delay: 0.15s;
+        }
+
+        @keyframes thruster-flame {
+          0% { 
+            transform: scaleY(1) scaleX(0.8);
+            opacity: 0.8;
+            box-shadow: 
+              0 0 25px rgba(0, 200, 255, 0.8),
+              0 0 50px rgba(0, 255, 255, 0.4);
+          }
+          100% { 
+            transform: scaleY(1.3) scaleX(1.1);
+            opacity: 1;
+            box-shadow: 
+              0 0 40px rgba(0, 200, 255, 1),
+              0 0 80px rgba(0, 255, 255, 0.6),
+              0 0 120px rgba(255, 255, 255, 0.3);
+          }
+        }
+
+        /* Partículas de escape */
+        .thruster-particles {
+          position: absolute;
+          bottom: -30px;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 200px;
+          height: 80px;
+          z-index: 14;
+        }
+
+        .particle {
+          position: absolute;
+          width: 4px;
+          height: 4px;
+          background: radial-gradient(circle,
+            rgba(0, 255, 255, 1) 0%,
+            rgba(0, 200, 255, 0.8) 50%,
+            transparent 100%
+          );
+          border-radius: 50%;
+          animation: particle-trail 1s ease-out infinite;
+        }
+
+        .particle:nth-child(1) { left: 20%; animation-delay: 0s; }
+        .particle:nth-child(2) { left: 35%; animation-delay: 0.1s; }
+        .particle:nth-child(3) { left: 50%; animation-delay: 0.2s; }
+        .particle:nth-child(4) { left: 65%; animation-delay: 0.15s; }
+        .particle:nth-child(5) { left: 80%; animation-delay: 0.05s; }
+
+        @keyframes particle-trail {
+          0% { 
+            transform: translateY(0px) scale(1);
+            opacity: 1;
+          }
+          100% { 
+            transform: translateY(60px) scale(0.2);
+            opacity: 0;
+          }
+        }
+
+        /* Ondas de energía */
+        .energy-waves {
+          position: absolute;
+          bottom: -60px;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 150px;
+          height: 150px;
+          z-index: 13;
+        }
+
+        .energy-wave {
+          position: absolute;
+          top: 0;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 100%;
+          height: 100%;
+          border: 2px solid rgba(0, 255, 255, 0.6);
+          border-radius: 50%;
+          animation: energy-pulse 2s ease-out infinite;
+        }
+
+        .energy-wave:nth-child(1) { animation-delay: 0s; }
+        .energy-wave:nth-child(2) { animation-delay: 0.5s; }
+        .energy-wave:nth-child(3) { animation-delay: 1s; }
+
+        @keyframes energy-pulse {
+          0% {
+            transform: translateX(-50%) scale(0.3);
+            opacity: 1;
+            border-color: rgba(0, 255, 255, 0.8);
+          }
+          100% {
+            transform: translateX(-50%) scale(1.2);
+            opacity: 0;
+            border-color: rgba(0, 255, 255, 0);
+          }
+        }
+
         /* Animaciones */
         @keyframes mystical-glow {
           0%, 100% { opacity: 0.8; transform: scale(1.1); }
@@ -800,6 +952,30 @@ const BackgroundScene = () => {
             <div className="boat-stern"></div>
           </div>
           <div className="mystical-propulsion"></div>
+          
+          {/* Propulsores espaciales */}
+          <div className="space-thrusters">
+            <div className="thruster thruster-left"></div>
+            <div className="thruster thruster-center-left"></div>
+            <div className="thruster thruster-center-right"></div>
+            <div className="thruster thruster-right"></div>
+          </div>
+
+          {/* Partículas de escape */}
+          <div className="thruster-particles">
+            <div className="particle"></div>
+            <div className="particle"></div>
+            <div className="particle"></div>
+            <div className="particle"></div>
+            <div className="particle"></div>
+          </div>
+
+          {/* Ondas de energía */}
+          <div className="energy-waves">
+            <div className="energy-wave"></div>
+            <div className="energy-wave"></div>
+            <div className="energy-wave"></div>
+          </div>
         </div>
       </div>
     </div>
