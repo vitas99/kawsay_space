@@ -241,7 +241,7 @@ const BackgroundScene = () => {
         .totora-rider {
           position: absolute;
           top: 22%;
-          right: 8%;
+          right: 40%;
           animation: epic-journey 12s cubic-bezier(0.4, 0, 0.2, 1) infinite;
           z-index: 15;
           filter: drop-shadow(0 0 37.5px rgba(255, 140, 0, 0.3));
@@ -256,7 +256,7 @@ const BackgroundScene = () => {
         .condor {
           position: absolute;
           top: -67.5px;
-          left: 22.5px;
+          left: 97.5px;
           z-index: 17;
           animation: condor-soaring 2s ease-in-out infinite;
           filter: 
@@ -718,17 +718,65 @@ const BackgroundScene = () => {
             transform: translateX(140vw) translateY(0px) rotateZ(0deg);
             filter: drop-shadow(0 0 37.5px rgba(255, 140, 0, 0.3));
           }
-          25% { 
+          5% { 
+            transform: translateX(120vw) translateY(-22.5px) rotateZ(-2deg);
+          }
+          10% { 
+            transform: translateX(105vw) translateY(-45px) rotateZ(-4deg);
+          }
+          15% { 
+            transform: translateX(90vw) translateY(-37.5px) rotateZ(-3deg);
+          }
+          20% { 
             transform: translateX(78vw) translateY(-60px) rotateZ(-5deg);
+          }
+          25% { 
+            transform: translateX(66vw) translateY(-52.5px) rotateZ(-4deg);
+          }
+          30% { 
+            transform: translateX(56vw) translateY(-30px) rotateZ(-2deg);
+          }
+          35% { 
+            transform: translateX(47vw) translateY(-15px) rotateZ(-1deg);
+          }
+          40% { 
+            transform: translateX(38vw) translateY(7.5px) rotateZ(1deg);
+          }
+          45% { 
+            transform: translateX(30vw) translateY(22.5px) rotateZ(3deg);
           }
           50% { 
             transform: translateX(23vw) translateY(37.5px) rotateZ(4deg);
           }
+          55% { 
+            transform: translateX(17vw) translateY(30px) rotateZ(3deg);
+          }
+          60% { 
+            transform: translateX(12vw) translateY(15px) rotateZ(2deg);
+          }
+          65% { 
+            transform: translateX(7vw) translateY(-7.5px) rotateZ(0deg);
+          }
+          70% { 
+            transform: translateX(3vw) translateY(-22.5px) rotateZ(-2deg);
+          }
           75% { 
             transform: translateX(-1vw) translateY(-37.5px) rotateZ(-4deg);
           }
+          80% { 
+            transform: translateX(-5vw) translateY(-52.5px) rotateZ(-5deg);
+          }
+          85% { 
+            transform: translateX(-10vw) translateY(-60px) rotateZ(-6deg);
+          }
+          90% { 
+            transform: translateX(-15vw) translateY(-52.5px) rotateZ(-5deg);
+          }
+          95% { 
+            transform: translateX(-20vw) translateY(-30px) rotateZ(-3deg);
+          }
           100% { 
-            transform: translateX(-15vw) translateY(0px) rotateZ(0deg);
+            transform: translateX(-30vw) translateY(0px) rotateZ(0deg);
             filter: drop-shadow(0 0 60px rgba(255, 140, 0, 0.5));
           }
         }
@@ -742,14 +790,14 @@ const BackgroundScene = () => {
           }
         }
 
-        /* Montañas */
+        /* Montañas andinas suaves */
         .mountains {
           position: absolute;
           bottom: 0;
           left: 0;
           width: 100%;
-          height: 40%;
-          z-index: 3;
+          height: 45%;
+          z-index: 1;
         }
 
         .mountain {
@@ -757,31 +805,37 @@ const BackgroundScene = () => {
           bottom: 0;
         }
 
+        /* Montaña izquierda - forma más suave */
         .mountain-1 {
           left: 0;
           width: 0;
           height: 0;
-          border-left: 200px solid transparent;
-          border-right: 300px solid transparent;
-          border-bottom: 280px solid rgba(25, 25, 112, 0.9);
+          border-left: 280px solid transparent;
+          border-right: 350px solid transparent;
+          border-bottom: 300px solid rgba(45, 55, 72, 0.8);
+          border-radius: 50% 50% 0 0;
         }
 
+        /* Montaña central - más alta y suave */
         .mountain-2 {
-          left: 30%;
+          left: 25%;
           width: 0;
           height: 0;
-          border-left: 180px solid transparent;
-          border-right: 250px solid transparent;
-          border-bottom: 320px solid rgba(25, 25, 112, 0.95);
+          border-left: 320px solid transparent;
+          border-right: 380px solid transparent;
+          border-bottom: 350px solid rgba(55, 65, 81, 0.9);
+          border-radius: 60% 60% 0 0;
         }
 
+        /* Montaña derecha - suave */
         .mountain-3 {
           right: 0;
           width: 0;
           height: 0;
-          border-left: 220px solid transparent;
-          border-right: 180px solid transparent;
-          border-bottom: 300px solid rgba(25, 25, 112, 0.85);
+          border-left: 300px solid transparent;
+          border-right: 250px solid transparent;
+          border-bottom: 280px solid rgba(40, 50, 65, 0.85);
+          border-radius: 55% 45% 0 0;
         }
 
         /* Enhanced horizon gradient */
@@ -911,7 +965,7 @@ const BackgroundScene = () => {
         <div className="light-beam"></div>
       </div>
 
-      {/* Mountains */}
+      {/* Montañas andinas suaves en el fondo */}
       <div className="mountains">
         <div className="mountain mountain-1"></div>
         <div className="mountain mountain-2"></div>
