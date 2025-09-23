@@ -209,12 +209,6 @@ export interface Coordinates {
   z?: number;
 }
 
-export interface AnimationConfig {
-  duration: number;
-  easing: string;
-  delay?: number;
-}
-
 // Tipos para constantes (reemplazo de as const)
 export type MissionType = 'new' | 'power' | 'completed';
 export type NavigationVariant = 'profile' | 'logic' | 'account' | 'info' | 'question' | 'help';
@@ -259,3 +253,279 @@ export interface AuthState {
   isLoading: boolean;
   error: string | null;
 }
+
+// types/starmap.ts - Tipos específicos para el mapa estelar
+
+// Tipos principales para misiones del mapa estelar
+export interface StarMapMission {
+  id: string;
+  name: string;
+  description: string;
+  planetType: 'earth' | 'mars' | 'moon' | 'europa' | 'paracas';
+  position: { x: number; y: number };
+  isLocked: boolean;
+  isCompleted: boolean;
+  nasaArticleId: string;
+  connections: string[];
+  difficulty?: 'easy' | 'medium' | 'hard';
+  estimatedTime?: number; // en minutos
+}
+
+// Tipos para progreso del usuario
+export interface UserProgress {
+  level: number;
+  completedMissions: string[];
+  badges: Badge[];
+  currentMission?: string;
+  experience: number;
+  totalMissionsCompleted: number;
+}
+
+// Tipos para badges/insignias
+export interface Badge {
+  id: string;
+  name: string;
+  icon: string;
+  description: string;
+  rarity: 'common' | 'rare' | 'epic' | 'legendary';
+  unlockedAt?: Date;
+}
+
+// Tipos para cuestionarios
+export interface QuizQuestion {
+  id: string;
+  question: string;
+  options: string[];
+  correctAnswer: number;
+  explanation?: string;
+  points: number;
+}
+
+export interface Quiz {
+  id: string;
+  missionId: string;
+  questions: QuizQuestion[];
+  passingScore: number;
+  timeLimit?: number; // en segundos
+}
+
+// Tipos para artículos de NASA
+export interface NasaArticle {
+  id: string;
+  title: string;
+  content: string;
+  imageUrl?: string;
+  videoUrl?: string;
+  sourceUrl: string;
+  publishedDate: Date;
+  readingTime: number; // en minutos
+  tags: string[];
+}
+
+// Props para componentes del mapa estelar
+export interface StarMapProps {
+  onMissionSelect?: (missionId: string) => void;
+  onNavigate?: (route: string) => void;
+  userProgress?: UserProgress;
+  className?: string;
+}
+
+export interface PlanetNodeProps {
+  mission: StarMapMission;
+  isSelected?: boolean;
+  onClick: (missionId: string) => void;
+  style?: React.CSSProperties;
+  className?: string;
+}
+
+export interface UserProfileProps {
+  level: number;
+  userName: string;
+  badges: Badge[];
+  experience?: number;
+  className?: string;
+}
+
+export interface MissionPanelProps {
+  activeMissions: StarMapMission[];
+  unlockedPowers: string[];
+  className?: string;
+}
+
+export interface ConnectionLinesProps {
+  missions: StarMapMission[];
+  className?: string;
+}
+
+export interface NavigationBarProps {
+  onNavigate: (route: string) => void;
+  activeSection: string;
+  className?: string;
+}
+
+// Tipos para el estado global del mapa estelar
+export interface StarMapState {
+  missions: StarMapMission[];
+  selectedMission: string | null;
+  userProgress: UserProgress;
+  isLoading: boolean;
+  error: string | null;
+}
+
+// Tipos para eventos del mapa estelar
+export interface MissionSelectEvent {
+  missionId: string;
+  mission: StarMapMission;
+  timestamp: Date;
+}
+
+export interface MissionCompleteEvent {
+  missionId: string;
+  score: number;
+  timeSpent: number;
+  badgesEarned: Badge[];
+  timestamp: Date;
+}
+
+// Tipos para configuración de planetas
+export interface PlanetConfig {
+  type: 'earth' | 'mars' | 'moon' | 'europa' | 'paracas';
+  color: string;
+  icon: string;
+  hasRing: boolean;
+  atmosphereColor: string;
+  size: 'small' | 'medium' | 'large';
+}
+
+// Constantes para planetas
+export const PLANET_CONFIGS: Record<string, PlanetConfig> = {
+  earth: {
+    type: 'earth',
+    color: '#00D4FF',
+    icon: '🌍',
+    hasRing: false,
+    atmosphereColor: 'rgba(0, 212, 255, 0.3)',
+    size: 'large'
+  },
+  mars: {
+    type: 'mars',
+    color: '#FF6B35',
+    icon: '🔴',
+    hasRing: false,
+    atmosphereColor: 'rgba(255, 107, 53, 0.3)',
+    size: 'medium'
+  },
+  moon: {
+    type: 'moon',
+    color: '#E0E0E0',
+    icon: '🌙',
+    hasRing: false,
+    atmosphereColor: 'rgba(224, 224, 224, 0.3)',
+    size: 'small'
+  },
+  europa: {
+    type: 'europa',
+    color: '#4ECDC4',
+    icon: '🛰️',
+    hasRing: true,
+    atmosphereColor: 'rgba(78, 205, 196, 0.3)',
+    size: 'medium'
+  },
+  paracas: {
+    type: 'paracas',
+    color: '#9B59B6',
+    icon: '🪐',
+    hasRing: true,
+    atmosphereColor: 'rgba(155, 89, 182, 0.3)',
+    size: 'large'
+  }
+};
+
+// Tipos para animaciones
+export interface AnimationConfig {
+  duration: number;
+  easing: 'linear' | 'ease' | 'ease-in' | 'ease-out' | 'ease-in-out';
+  delay?: number;
+  iterations?: number | 'infinite';
+}
+
+// Tipos para posicionamiento
+export interface Position {
+  x: number;
+  y: number;
+  z?: number;
+}
+
+export interface ConnectionLine {
+  fromMission: string;
+  toMission: string;
+  fromPosition: Position;
+  toPosition: Position;
+  isActive: boolean;
+}
+
+// Utilidades para validación de tipos
+export function isValidPlanetType(type: string): type is PlanetConfig['type'] {
+  return ['earth', 'mars', 'moon', 'europa', 'paracas'].includes(type);
+}
+
+export function isValidBadgeRarity(rarity: string): rarity is Badge['rarity'] {
+  return ['common', 'rare', 'epic', 'legendary'].includes(rarity);
+}
+
+// Factory functions para crear objetos
+export function createStarMapMission(
+  id: string,
+  name: string,
+  description: string,
+  planetType: PlanetConfig['type'],
+  position: Position
+): StarMapMission {
+  return {
+    id,
+    name,
+    description,
+    planetType,
+    position,
+    isLocked: true,
+    isCompleted: false,
+    nasaArticleId: `nasa-article-${id}`,
+    connections: [],
+    difficulty: 'medium',
+    estimatedTime: 15
+  };
+}
+
+export function createBadge(
+  id: string,
+  name: string,
+  description: string,
+  icon: string,
+  rarity: Badge['rarity'] = 'common'
+): Badge {
+  return {
+    id,
+    name,
+    icon,
+    description,
+    rarity,
+    unlockedAt: new Date()
+  };
+}
+
+export function createUserProgress(): UserProgress {
+  return {
+    level: 1,
+    completedMissions: [],
+    badges: [],
+    experience: 0,
+    totalMissionsCompleted: 0
+  };
+}
+
+// Constantes por defecto
+export const DEFAULT_MISSION_TIME = 15;
+export const DEFAULT_QUIZ_PASSING_SCORE = 70;
+export const DEFAULT_QUIZ_TIME_LIMIT = 300; // 5 minutos
+export const POINTS_PER_CORRECT_ANSWER = 10;
+export const EXPERIENCE_PER_MISSION = 100;

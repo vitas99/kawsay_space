@@ -1,22 +1,24 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import StarField from '../../components/StarField/StarField';
-import GlassPanel from '../../components/GlassPanel/GlassPanel';
-import PlanetEarth from '../../components/PlanetEarth/PlanetEarth';
-import NavigationButton from '../../components/NavigationButton/NavigationButton';
-import './MainDashboard.css';
+import React, { useState, useEffect, useCallback, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
+import StarField from "../../components/StarField/StarField";
+import GlassPanel from "../../components/GlassPanel/GlassPanel";
+import PlanetEarth from "../../components/PlanetEarth/PlanetEarth";
+import NavigationButton from "../../components/NavigationButton/NavigationButton";
+import "./MainDashboard.css";
 
 // Import types (removido Astronaut ya que no se usa)
-import { 
-  type Mission, 
+import {
+  type Mission,
   type MainDashboardProps,
   type RouteNames,
   createNavigationError,
   createMissionError,
-  DEFAULT_USER_NAME 
-} from '../../types/index';
+  DEFAULT_USER_NAME,
+} from "../../types/index";
 
 // Variable para detectar entorno de desarrollo (reemplazo de process.env)
-const isDevelopment = import.meta.env?.DEV || window.location.hostname === 'localhost';
+const isDevelopment =
+  import.meta.env?.DEV || window.location.hostname === "localhost";
 
 // Constantes para evitar repetición
 const ANIMATION_DELAYS = {
@@ -32,7 +34,7 @@ const DEFAULT_MISSIONS: Mission[] = [
     icon: "🌙",
     type: "new",
     badge: "NUEVO",
-    color: "#00D4FF"
+    color: "#00D4FF",
   },
   {
     id: 2,
@@ -41,7 +43,7 @@ const DEFAULT_MISSIONS: Mission[] = [
     icon: "🛰️",
     type: "power",
     badge: "POWER",
-    color: "#FF9500"
+    color: "#FF9500",
   },
   {
     id: 3,
@@ -50,19 +52,20 @@ const DEFAULT_MISSIONS: Mission[] = [
     icon: "🚀",
     type: "completed",
     badge: "COMPLETADO",
-    color: "#4ECDC4"
-  }
+    color: "#4ECDC4",
+  },
 ];
 
-const MainDashboard: React.FC<MainDashboardProps> = ({ 
+const MainDashboard: React.FC<MainDashboardProps> = ({
   onNavigate,
   userName = DEFAULT_USER_NAME,
   systemStatus = {
-    system: 'online',
-    connection: 'stable',
-    explorer: userName || DEFAULT_USER_NAME
-  }
+    system: "online",
+    connection: "stable",
+    explorer: userName || DEFAULT_USER_NAME,
+  },
 }) => {
+  const navigate = useNavigate();
   // Estados
   const [isLoaded, setIsLoaded] = useState(false);
   const [selectedSection, setSelectedSection] = useState<string | null>(null);
@@ -75,11 +78,11 @@ const MainDashboard: React.FC<MainDashboardProps> = ({
     const timer1 = setTimeout(() => {
       setIsLoaded(true);
     }, ANIMATION_DELAYS.LOAD);
-    
+
     const timer2 = setTimeout(() => {
       setShowWelcomeAnimation(false);
     }, ANIMATION_DELAYS.WELCOME);
-    
+
     return () => {
       clearTimeout(timer1);
       clearTimeout(timer2);
@@ -95,114 +98,131 @@ const MainDashboard: React.FC<MainDashboardProps> = ({
   }, [error]);
 
   // Manejadores de eventos con manejo de errores
-  const handleNavigation = useCallback((route: string) => {
-    try {
-      setSelectedSection(route);
-      
-      if (onNavigate) {
-        onNavigate(route);
+  const handleNavigation = useCallback(
+    (route: string) => {
+      try {
+        setSelectedSection(route);
+
+        if (onNavigate) {
+          onNavigate(route);
+        }
+
+        // Log para debugging (usando variable en lugar de process.env)
+        if (isDevelopment) {
+          console.log(`Navegando a: ${route}`);
+        }
+        navigate("/starmap");
+      } catch (err) {
+        const navigationError = createNavigationError(
+          err instanceof Error
+            ? err.message
+            : "Error desconocido en navegación",
+          route,
+          "button"
+        );
+
+        console.error("Error en navegación:", navigationError);
+        setError(`Error al navegar a ${route}: ${navigationError.message}`);
+
+        // Resetear estado en caso de error
+        setSelectedSection(null);
       }
-      
-      // Log para debugging (usando variable en lugar de process.env)
-      if (isDevelopment) {
-        console.log(`Navegando a: ${route}`);
-      }
-    } catch (err) {
-      const navigationError = createNavigationError(
-        err instanceof Error ? err.message : 'Error desconocido en navegación',
-        route,
-        'button'
-      );
-      
-      console.error('Error en navegación:', navigationError);
-      setError(`Error al navegar a ${route}: ${navigationError.message}`);
-      
-      // Resetear estado en caso de error
-      setSelectedSection(null);
-    }
-  }, [onNavigate]);
+    },
+    [onNavigate]
+  );
 
   const handleEnterExploration = useCallback(() => {
     try {
-      handleNavigation('missions');
+      handleNavigation("missions");
     } catch (err) {
-      console.error('Error al iniciar exploración:', err);
-      setError('Error al iniciar la exploración');
+      console.error("Error al iniciar exploración:", err);
+      setError("Error al iniciar la exploración");
     }
   }, [handleNavigation]);
 
-  const handleMissionClick = useCallback((missionId: number) => {
-    try {
-      const mission = missions.find(m => m.id === missionId);
-      if (!mission) {
-        const missionError = createMissionError(
-          `Misión con ID ${missionId} no encontrada`,
-          missionId
-        );
-        throw new Error(missionError.message);
+  const handleMissionClick = useCallback(
+    (missionId: number) => {
+      try {
+        const mission = missions.find((m) => m.id === missionId);
+        if (!mission) {
+          const missionError = createMissionError(
+            `Misión con ID ${missionId} no encontrada`,
+            missionId
+          );
+          throw new Error(missionError.message);
+        }
+
+        handleNavigation(`mission-${missionId}` as RouteNames);
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error ? err.message : "Error al seleccionar misión";
+        console.error("Error al seleccionar misión:", err);
+        setError(errorMessage);
       }
-      
-      handleNavigation(`mission-${missionId}` as RouteNames);
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Error al seleccionar misión';
-      console.error('Error al seleccionar misión:', err);
-      setError(errorMessage);
-    }
-  }, [missions, handleNavigation]);
+    },
+    [missions, handleNavigation]
+  );
 
   // Renderizado de componentes con manejo de errores
-  const renderMissionCard = useCallback((mission: Mission) => {
-    try {
-      return (
-        <div 
-          key={mission.id} 
-          className={`main-dashboard__mission-card main-dashboard__mission-card--${mission.type}`} 
-          onClick={() => handleMissionClick(mission.id)}
-          role="button"
-          tabIndex={0}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-              e.preventDefault();
-              handleMissionClick(mission.id);
-            }
-          }}
-        >
-          <div className="main-dashboard__mission-icon" aria-hidden="true">
-            {mission.icon}
+  const renderMissionCard = useCallback(
+    (mission: Mission) => {
+      try {
+        return (
+          <div
+            key={mission.id}
+            className={`main-dashboard__mission-card main-dashboard__mission-card--${mission.type}`}
+            onClick={() => handleMissionClick(mission.id)}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                handleMissionClick(mission.id);
+              }
+            }}
+          >
+            <div className="main-dashboard__mission-icon" aria-hidden="true">
+              {mission.icon}
+            </div>
+            <div className="main-dashboard__mission-info">
+              <h4 className="main-dashboard__mission-title">{mission.title}</h4>
+              <p className="main-dashboard__mission-subtitle">
+                {mission.subtitle}
+              </p>
+            </div>
+            <div className="main-dashboard__mission-badge">{mission.badge}</div>
           </div>
-          <div className="main-dashboard__mission-info">
-            <h4 className="main-dashboard__mission-title">{mission.title}</h4>
-            <p className="main-dashboard__mission-subtitle">{mission.subtitle}</p>
+        );
+      } catch (err) {
+        console.error(`Error renderizando misión ${mission.id}:`, err);
+        return (
+          <div
+            key={`error-${mission.id}`}
+            className="main-dashboard__mission-card main-dashboard__mission-card--error"
+          >
+            <div className="main-dashboard__mission-info">
+              <h4 className="main-dashboard__mission-title">Error</h4>
+              <p className="main-dashboard__mission-subtitle">
+                No se pudo cargar
+              </p>
+            </div>
           </div>
-          <div className="main-dashboard__mission-badge">{mission.badge}</div>
-        </div>
-      );
-    } catch (err) {
-      console.error(`Error renderizando misión ${mission.id}:`, err);
-      return (
-        <div 
-          key={`error-${mission.id}`} 
-          className="main-dashboard__mission-card main-dashboard__mission-card--error"
-        >
-          <div className="main-dashboard__mission-info">
-            <h4 className="main-dashboard__mission-title">Error</h4>
-            <p className="main-dashboard__mission-subtitle">No se pudo cargar</p>
-          </div>
-        </div>
-      );
-    }
-  }, [handleMissionClick]);
+        );
+      }
+    },
+    [handleMissionClick]
+  );
 
   // Renderizado de notificación de error
   const renderError = useMemo(() => {
     if (!error) return null;
-    
+
     return (
       <div className="main-dashboard__error-notification" role="alert">
         <div className="main-dashboard__error-content">
           <span className="main-dashboard__error-icon">⚠️</span>
           <span className="main-dashboard__error-text">{error}</span>
-          <button 
+          <button
             className="main-dashboard__error-close"
             onClick={() => setError(null)}
             aria-label="Cerrar notificación de error"
@@ -217,20 +237,20 @@ const MainDashboard: React.FC<MainDashboardProps> = ({
   // Función para obtener el estado del sistema con colores
   const getSystemStatusClass = useCallback((status: string) => {
     switch (status) {
-      case 'online':
-        return 'main-dashboard__status-value--online';
-      case 'offline':
-        return 'main-dashboard__status-value--offline';
-      case 'maintenance':
-        return 'main-dashboard__status-value--maintenance';
-      case 'stable':
-        return 'main-dashboard__status-value--stable';
-      case 'unstable':
-        return 'main-dashboard__status-value--unstable';
-      case 'disconnected':
-        return 'main-dashboard__status-value--disconnected';
+      case "online":
+        return "main-dashboard__status-value--online";
+      case "offline":
+        return "main-dashboard__status-value--offline";
+      case "maintenance":
+        return "main-dashboard__status-value--maintenance";
+      case "stable":
+        return "main-dashboard__status-value--stable";
+      case "unstable":
+        return "main-dashboard__status-value--unstable";
+      case "disconnected":
+        return "main-dashboard__status-value--disconnected";
       default:
-        return 'main-dashboard__status-value--ready';
+        return "main-dashboard__status-value--ready";
     }
   }, []);
 
@@ -239,84 +259,99 @@ const MainDashboard: React.FC<MainDashboardProps> = ({
     return (
       <div className="main-dashboard">
         {renderError}
-        
-        <StarField 
-          starCount={250} 
-          className="main-dashboard__starfield" 
-        />
-        
+
+        <StarField starCount={250} className="main-dashboard__starfield" />
+
         <GlassPanel
           curved
           animated
           glowEffect
           borderColor="cyan"
           size="fullscreen"
-          className={`main-dashboard__panel ${isLoaded ? 'main-dashboard__panel--loaded' : ''}`}
+          className={`main-dashboard__panel ${
+            isLoaded ? "main-dashboard__panel--loaded" : ""
+          }`}
         >
           <div className="main-dashboard__content">
             {/* Navegación izquierda */}
-            <nav className="main-dashboard__nav-left" role="navigation" aria-label="Navegación principal">
-              <NavigationButton 
-                icon="👤" 
-                text="PERFIL" 
-                variant="profile" 
-                size="large" 
-                active={selectedSection === 'profile'} 
-                onClick={() => handleNavigation('profile')} 
-                tooltip="Ver mi perfil de astronauta" 
+            <nav
+              className="main-dashboard__nav-left"
+              role="navigation"
+              aria-label="Navegación principal"
+            >
+              <NavigationButton
+                icon="👤"
+                text="PERFIL"
+                variant="profile"
+                size="large"
+                active={selectedSection === "profile"}
+                onClick={() => handleNavigation("profile")}
+                tooltip="Ver mi perfil de astronauta"
               />
-              <NavigationButton 
-                icon="⚙️" 
-                text="LÓGICA" 
-                variant="logic" 
-                size="large" 
-                active={selectedSection === 'settings'} 
-                onClick={() => handleNavigation('settings')} 
-                tooltip="Configuración del sistema" 
+              <NavigationButton
+                icon="⚙️"
+                text="LÓGICA"
+                variant="logic"
+                size="large"
+                active={selectedSection === "settings"}
+                onClick={() => handleNavigation("settings")}
+                tooltip="Configuración del sistema"
               />
-              <NavigationButton 
-                icon="👥" 
-                text="EQUIPO" 
-                variant="account" 
-                size="large" 
-                active={selectedSection === 'team'} 
-                onClick={() => handleNavigation('team')} 
-                tooltip="Mi equipo de exploración" 
+              <NavigationButton
+                icon="👥"
+                text="EQUIPO"
+                variant="account"
+                size="large"
+                active={selectedSection === "team"}
+                onClick={() => handleNavigation("team")}
+                tooltip="Mi equipo de exploración"
               />
             </nav>
 
             {/* Contenido central */}
             <main className="main-dashboard__center">
               <div className="main-dashboard__planet-container">
-                <PlanetEarth 
-                  size={220} 
-                  rotationSpeed={25} 
-                  showAtmosphere 
-                  showClouds 
-                  showRocket 
-                  className="main-dashboard__planet" 
+                <PlanetEarth
+                  size={220}
+                  rotationSpeed={25}
+                  showAtmosphere
+                  showClouds
+                  showRocket
+                  className="main-dashboard__planet"
                 />
               </div>
-              
+
               <div className="main-dashboard__branding">
                 <div className="main-dashboard__nasa-logo">NASA</div>
                 <div className="main-dashboard__nasa-subtitle">
-                  NATIONAL AERONAUTICS<br />
+                  NATIONAL AERONAUTICS
+                  <br />
                   AND SPACE ADMINISTRATION
                 </div>
               </div>
 
-              <div className={`main-dashboard__welcome ${showWelcomeAnimation ? 'main-dashboard__welcome--animated' : ''}`}>
+              <div
+                className={`main-dashboard__welcome ${
+                  showWelcomeAnimation
+                    ? "main-dashboard__welcome--animated"
+                    : ""
+                }`}
+              >
                 <h1 className="main-dashboard__title">
-                  ¡HOLA, FUTURO<br />
-                  <span className="main-dashboard__title-highlight">EXPLORADOR!</span>
+                  ¡HOLA, FUTURO
+                  <br />
+                  <span className="main-dashboard__title-highlight">
+                    EXPLORADOR!
+                  </span>
                 </h1>
                 <p className="main-dashboard__subtitle">WELCOME, EXPLORER</p>
-                <p className="main-dashboard__ready-text">¡ESTOY LISTO PARA LA AVENTURA!</p>
+                <p className="main-dashboard__ready-text">
+                  ¡ESTOY LISTO PARA LA AVENTURA!
+                </p>
               </div>
 
-              <button 
-                className="main-dashboard__enter-btn" 
+              <button
+                className="main-dashboard__enter-btn"
                 onClick={handleEnterExploration}
                 aria-label="Iniciar exploración espacial"
               >
@@ -326,45 +361,51 @@ const MainDashboard: React.FC<MainDashboardProps> = ({
             </main>
 
             {/* Navegación derecha */}
-            <nav className="main-dashboard__nav-right" role="navigation" aria-label="Navegación secundaria">
-              <NavigationButton 
-                text="INFO" 
-                variant="info" 
-                size="large" 
-                active={selectedSection === 'info'} 
-                onClick={() => handleNavigation('info')} 
-                tooltip="Información del sistema" 
+            <nav
+              className="main-dashboard__nav-right"
+              role="navigation"
+              aria-label="Navegación secundaria"
+            >
+              <NavigationButton
+                text="INFO"
+                variant="info"
+                size="large"
+                active={selectedSection === "info"}
+                onClick={() => handleNavigation("info")}
+                tooltip="Información del sistema"
               />
-              <NavigationButton 
-                icon="ℹ️" 
-                variant="question" 
-                size="large" 
-                active={selectedSection === 'about'} 
-                onClick={() => handleNavigation('about')} 
-                tooltip="Acerca de la misión" 
+              <NavigationButton
+                icon="ℹ️"
+                variant="question"
+                size="large"
+                active={selectedSection === "about"}
+                onClick={() => handleNavigation("about")}
+                tooltip="Acerca de la misión"
               />
-              <NavigationButton 
-                icon="?" 
-                variant="question" 
-                size="large" 
-                active={selectedSection === 'faq'} 
-                onClick={() => handleNavigation('faq')} 
-                tooltip="Preguntas frecuentes" 
+              <NavigationButton
+                icon="?"
+                variant="question"
+                size="large"
+                active={selectedSection === "faq"}
+                onClick={() => handleNavigation("faq")}
+                tooltip="Preguntas frecuentes"
               />
-              <NavigationButton 
-                text="HELP" 
-                variant="help" 
-                size="large" 
-                active={selectedSection === 'help'} 
-                onClick={() => handleNavigation('help')} 
-                tooltip="Centro de ayuda" 
+              <NavigationButton
+                text="HELP"
+                variant="help"
+                size="large"
+                active={selectedSection === "help"}
+                onClick={() => handleNavigation("help")}
+                tooltip="Centro de ayuda"
               />
             </nav>
           </div>
 
           {/* Vista previa de misiones - Corregido el role de ARIA */}
           <section className="main-dashboard__missions-preview">
-            <h2 className="main-dashboard__missions-title">MISIONES DISPONIBLES</h2>
+            <h2 className="main-dashboard__missions-title">
+              MISIONES DISPONIBLES
+            </h2>
             <div className="main-dashboard__missions-grid">
               {missions.map(renderMissionCard)}
             </div>
@@ -372,16 +413,28 @@ const MainDashboard: React.FC<MainDashboardProps> = ({
         </GlassPanel>
 
         {/* Estado del sistema */}
-        <aside className="main-dashboard__status" role="complementary" aria-label="Estado del sistema">
+        <aside
+          className="main-dashboard__status"
+          role="complementary"
+          aria-label="Estado del sistema"
+        >
           <div className="main-dashboard__status-item">
             <span className="main-dashboard__status-label">SISTEMA</span>
-            <span className={`main-dashboard__status-value ${getSystemStatusClass(systemStatus.system)}`}>
+            <span
+              className={`main-dashboard__status-value ${getSystemStatusClass(
+                systemStatus.system
+              )}`}
+            >
               {systemStatus.system.toUpperCase()}
             </span>
           </div>
           <div className="main-dashboard__status-item">
             <span className="main-dashboard__status-label">CONEXIÓN</span>
-            <span className={`main-dashboard__status-value ${getSystemStatusClass(systemStatus.connection)}`}>
+            <span
+              className={`main-dashboard__status-value ${getSystemStatusClass(
+                systemStatus.connection
+              )}`}
+            >
               {systemStatus.connection.toUpperCase()}
             </span>
           </div>
@@ -402,8 +455,8 @@ const MainDashboard: React.FC<MainDashboardProps> = ({
       </div>
     );
   } catch (err) {
-    console.error('Error crítico en MainDashboard:', err);
-    
+    console.error("Error crítico en MainDashboard:", err);
+
     // Fallback UI
     return (
       <div className="main-dashboard main-dashboard--error">
@@ -411,8 +464,8 @@ const MainDashboard: React.FC<MainDashboardProps> = ({
           <div className="main-dashboard__error-icon">🚀</div>
           <h1>Error en el Sistema de Navegación</h1>
           <p>Ha ocurrido un error crítico en el panel de control.</p>
-          <button 
-            onClick={() => window.location.reload()} 
+          <button
+            onClick={() => window.location.reload()}
             className="main-dashboard__error-reload"
           >
             Reiniciar Sistema
