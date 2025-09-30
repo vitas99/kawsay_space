@@ -4,27 +4,17 @@ import UserProfile from '../UserProfile/UserProfile';
 import MissionPanel from '../MissionPanel/MissionPanel';
 import NavigationBar from '../NavigationBar/NavigationBar';
 import ConnectionLines from './ConnectionLines';
-import { STAR_MAP_MISSIONS } from '../../data/mission';
+import { STAR_MAP_MISSIONS } from '../../data/missions'; // CORREGIDO: missions con 's'
+import type { StarMapMission, Badge } from '../../types/index'; // AGREGADO: importar tipos
 import './StarMap.css';
-import type { Badge } from '../../types';
-
-interface Mission {
-  id: string;
-  name: string;
-  description: string;
-  planetType: 'earth' | 'mars' | 'moon' | 'europa' | 'paracas';
-  position: { x: number; y: number };
-  isLocked: boolean;
-  isCompleted: boolean;
-  nasaArticleId: string;
-  connections: string[];
-}
 
 interface UserProgress {
   level: number;
   completedMissions: string[];
   badges: Badge[];
   currentMission?: string;
+  experience?: number;
+  totalMissionsCompleted?: number;
 }
 
 interface StarMapProps {
@@ -37,7 +27,9 @@ const DEFAULT_USER_PROGRESS: UserProgress = {
   level: 5,
   completedMissions: [],
   badges: [],
-  currentMission: undefined
+  currentMission: undefined,
+  experience: 450,
+  totalMissionsCompleted: 0
 };
 
 const StarMap: React.FC<StarMapProps> = ({
@@ -45,19 +37,19 @@ const StarMap: React.FC<StarMapProps> = ({
   onNavigate,
   userProgress = DEFAULT_USER_PROGRESS
 }) => {
-  const [missions, setMissions] = useState<Mission[]>([]);
+  const [missions, setMissions] = useState<StarMapMission[]>([]);
   const [selectedMission, setSelectedMission] = useState<string | null>(null);
-  const [activeMissions, setActiveMissions] = useState<Mission[]>([]);
+  const [activeMissions, setActiveMissions] = useState<StarMapMission[]>([]);
   const [unlockedPowers, setUnlockedPowers] = useState<string[]>([]);
 
   // Inicializar y actualizar misiones basado en el progreso del usuario
   useEffect(() => {
-    const updatedMissions = STAR_MAP_MISSIONS.map(mission => {
+    const updatedMissions = STAR_MAP_MISSIONS.map((mission: StarMapMission) => {
       // Primera misión (bone-loss) siempre desbloqueada
       const isFirstMission = mission.id === 'bone-loss';
       
       // Verificar si alguna misión prerequisito está completada
-      const hasCompletedPrerequisites = STAR_MAP_MISSIONS.some(prerequisite =>
+      const hasCompletedPrerequisites = STAR_MAP_MISSIONS.some((prerequisite: StarMapMission) =>
         prerequisite.connections.includes(mission.id) &&
         userProgress.completedMissions.includes(prerequisite.id)
       );
@@ -66,13 +58,7 @@ const StarMap: React.FC<StarMapProps> = ({
       const isCompleted = userProgress.completedMissions.includes(mission.id);
 
       return {
-        id: mission.id,
-        name: mission.name,
-        description: mission.description,
-        planetType: mission.planetType,
-        position: mission.position,
-        nasaArticleId: mission.nasaArticleId || '',
-        connections: mission.connections,
+        ...mission,
         isLocked: !isFirstMission && !hasCompletedPrerequisites && !isCompleted,
         isCompleted
       };
@@ -81,24 +67,24 @@ const StarMap: React.FC<StarMapProps> = ({
     setMissions(updatedMissions);
 
     // Misiones activas (disponibles pero no completadas)
-    const active = updatedMissions.filter(mission => 
+    const active = updatedMissions.filter((mission: StarMapMission) => 
       !mission.isLocked && !mission.isCompleted
     );
     setActiveMissions(active);
 
     // Poderes desbloqueados
     const powers = userProgress.completedMissions
-      .map(missionId => {
-        const mission = updatedMissions.find(m => m.id === missionId);
+      .map((missionId: string) => {
+        const mission = updatedMissions.find((m: StarMapMission) => m.id === missionId);
         return mission ? `${mission.name} - ${mission.description}` : '';
       })
       .filter(Boolean);
     setUnlockedPowers(powers);
 
-  }, [userProgress.completedMissions]); // Solo depende de completedMissions
+  }, [userProgress.completedMissions]);
 
   const handleMissionClick = useCallback((missionId: string) => {
-    const mission = missions.find(m => m.id === missionId);
+    const mission = missions.find((m: StarMapMission) => m.id === missionId);
     
     if (!mission) return;
     
@@ -125,12 +111,6 @@ const StarMap: React.FC<StarMapProps> = ({
           <div
             key={i}
             className="star-map__star"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 5}s`,
-              animationDuration: `${2 + Math.random() * 3}s`
-            }}
           />
         ))}
       </div>
@@ -139,6 +119,7 @@ const StarMap: React.FC<StarMapProps> = ({
         level={userProgress.level}
         userName="Cadete Cósmico"
         badges={userProgress.badges}
+        experience={userProgress.experience}
         className="star-map__user-profile"
       />
 
@@ -154,7 +135,7 @@ const StarMap: React.FC<StarMapProps> = ({
       />
 
       <div className="star-map__nodes">
-        {missions.map(mission => (
+        {missions.map((mission: StarMapMission) => (
           <PlanetNode
             key={mission.id}
             mission={mission}

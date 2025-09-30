@@ -1,5 +1,5 @@
 import React from 'react';
-import { STAR_MAP_MISSIONS } from '../../data/mission';
+import { STAR_MAP_MISSIONS } from '../../data/missions';
 import './ArticleHeader.css';
 
 interface ArticleHeaderProps {

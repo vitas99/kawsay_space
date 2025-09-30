@@ -314,11 +314,13 @@ export interface NasaArticle {
   id: string;
   title: string;
   content: string;
+  sections?: ArticleSection[];        // ← AGREGAR ESTA LÍNEA
+  conclusions?: ArticleConclusion[];  // ← AGREGAR ESTA LÍNEA
   imageUrl?: string;
   videoUrl?: string;
   sourceUrl: string;
   publishedDate: Date;
-  readingTime: number; // en minutos
+  readingTime: number;
   tags: string[];
 }
 
@@ -529,3 +531,20 @@ export const DEFAULT_QUIZ_PASSING_SCORE = 70;
 export const DEFAULT_QUIZ_TIME_LIMIT = 300; // 5 minutos
 export const POINTS_PER_CORRECT_ANSWER = 10;
 export const EXPERIENCE_PER_MISSION = 100;
+
+export interface ArticleSection {
+  icon: string;
+  title: string;
+  content: string | string[] | ArticleStep[];
+  type?: 'text' | 'list' | 'steps' | 'table' | 'conclusion';
+}
+
+export interface ArticleStep {
+  number: number;
+  description: string;
+}
+
+export interface ArticleConclusion {
+  icon: string;
+  text: string;
+}
