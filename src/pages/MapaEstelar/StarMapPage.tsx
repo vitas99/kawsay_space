@@ -33,12 +33,9 @@ const StarMapPage: React.FC = () => {
   const handleMissionSelect = useCallback((missionId: string) => {
     console.log('Mission selected:', missionId);
     
-    // Aquí podrías navegar a una página específica de la misión
-    // Por ejemplo: navigate(`/mission/${missionId}`);
-    
-    // Por ahora, solo mostrar un mensaje
-    alert(`Iniciando misión: ${missionId}\n\nEn una implementación completa, esto abriría el artículo de NASA y el cuestionario correspondiente.`);
-  }, []);
+    // Navegar a la página del artículo de la misión
+    navigate(`/mission/${missionId}`);
+  }, [navigate]);
 
   const handleNavigation = useCallback((route: string) => {
     console.log('Navigating to:', route);

@@ -4,10 +4,10 @@ import UserProfile from '../UserProfile/UserProfile';
 import MissionPanel from '../MissionPanel/MissionPanel';
 import NavigationBar from '../NavigationBar/NavigationBar';
 import ConnectionLines from './ConnectionLines';
+import { STAR_MAP_MISSIONS } from '../../data/mission';
 import './StarMap.css';
 import type { Badge } from '../../types';
 
-// Types
 interface Mission {
   id: string;
   name: string;
@@ -27,92 +27,11 @@ interface UserProgress {
   currentMission?: string;
 }
 
-
 interface StarMapProps {
   onMissionSelect?: (missionId: string) => void;
   onNavigate?: (route: string) => void;
   userProgress?: UserProgress;
 }
-
-const DEFAULT_MISSIONS: Mission[] = [
-  {
-    id: 'earth-start',
-    name: 'ÓRBITA TERRESTRE',
-    description: 'Inicio de Misión',
-    planetType: 'earth',
-    position: { x: 50, y: 85 },
-    isLocked: false,
-    isCompleted: false,
-    nasaArticleId: 'earth-orbit-basics',
-    connections: ['moon-station', 'mars-mission']
-  },
-  {
-    id: 'moon-station',
-    name: 'LUNA',
-    description: 'Estación Alpaca',
-    planetType: 'moon',
-    position: { x: 75, y: 60 },
-    isLocked: true,
-    isCompleted: false,
-    nasaArticleId: 'lunar-exploration',
-    connections: ['mars-mission', 'luna-gamma']
-  },
-  {
-    id: 'mars-mission',
-    name: 'MARTE',
-    description: 'Chacra Especial',
-    planetType: 'mars',
-    position: { x: 45, y: 35 },
-    isLocked: true,
-    isCompleted: false,
-    nasaArticleId: 'mars-exploration',
-    connections: ['europa-biolab', 'paracas-planet']
-  },
-  {
-    id: 'luna-gamma',
-    name: 'LUNA',
-    description: 'Estación Alpaca',
-    planetType: 'moon',
-    position: { x: 25, y: 75 },
-    isLocked: true,
-    isCompleted: false,
-    nasaArticleId: 'lunar-gamma-station',
-    connections: ['europa-biolab']
-  },
-  {
-    id: 'europa-biolab',
-    name: 'EUROPA',
-    description: 'Biolab Acuático',
-    planetType: 'europa',
-    position: { x: 85, y: 45 },
-    isLocked: true,
-    isCompleted: false,
-    nasaArticleId: 'europa-ocean-life',
-    connections: []
-  },
-  {
-    id: 'paracas-planet',
-    name: 'PLANETA PARACAS',
-    description: 'Tejidos Cósmicos',
-    planetType: 'paracas',
-    position: { x: 15, y: 25 },
-    isLocked: true,
-    isCompleted: false,
-    nasaArticleId: 'exoplanet-discovery',
-    connections: ['paracas-planet-2']
-  },
-  {
-    id: 'paracas-planet-2',
-    name: 'PLANETA PARACAS',
-    description: 'Tejidos Cósmicos',
-    planetType: 'paracas',
-    position: { x: 85, y: 15 },
-    isLocked: true,
-    isCompleted: false,
-    nasaArticleId: 'exoplanet-advanced',
-    connections: []
-  }
-];
 
 const DEFAULT_USER_PROGRESS: UserProgress = {
   level: 5,
@@ -126,51 +45,57 @@ const StarMap: React.FC<StarMapProps> = ({
   onNavigate,
   userProgress = DEFAULT_USER_PROGRESS
 }) => {
-  const [missions, setMissions] = useState<Mission[]>(DEFAULT_MISSIONS);
+  const [missions, setMissions] = useState<Mission[]>([]);
   const [selectedMission, setSelectedMission] = useState<string | null>(null);
   const [activeMissions, setActiveMissions] = useState<Mission[]>([]);
   const [unlockedPowers, setUnlockedPowers] = useState<string[]>([]);
 
-  // Update mission lock states based on user progress
+  // Inicializar y actualizar misiones basado en el progreso del usuario
   useEffect(() => {
-    const updatedMissions = missions.map(mission => {
-      // First mission is always unlocked
-      if (mission.id === 'earth-start') {
-        return { ...mission, isLocked: false };
-      }
-
-      // Check if any prerequisite missions are completed
-      const hasCompletedPrerequisites = missions.some(prerequisite =>
+    const updatedMissions = STAR_MAP_MISSIONS.map(mission => {
+      // Primera misión (bone-loss) siempre desbloqueada
+      const isFirstMission = mission.id === 'bone-loss';
+      
+      // Verificar si alguna misión prerequisito está completada
+      const hasCompletedPrerequisites = STAR_MAP_MISSIONS.some(prerequisite =>
         prerequisite.connections.includes(mission.id) &&
         userProgress.completedMissions.includes(prerequisite.id)
       );
 
-      // Check if this mission is completed
+      // Verificar si esta misión está completada
       const isCompleted = userProgress.completedMissions.includes(mission.id);
 
       return {
-        ...mission,
-        isLocked: !hasCompletedPrerequisites && !isCompleted,
+        id: mission.id,
+        name: mission.name,
+        description: mission.description,
+        planetType: mission.planetType,
+        position: mission.position,
+        nasaArticleId: mission.nasaArticleId || '',
+        connections: mission.connections,
+        isLocked: !isFirstMission && !hasCompletedPrerequisites && !isCompleted,
         isCompleted
       };
     });
 
     setMissions(updatedMissions);
 
-    // Set active missions (available but not completed)
+    // Misiones activas (disponibles pero no completadas)
     const active = updatedMissions.filter(mission => 
       !mission.isLocked && !mission.isCompleted
     );
     setActiveMissions(active);
 
-    // Set unlocked powers based on completed missions
-    const powers = userProgress.completedMissions.map(missionId => {
-      const mission = updatedMissions.find(m => m.id === missionId);
-      return mission ? `${mission.name} - ${mission.description}` : '';
-    }).filter(Boolean);
+    // Poderes desbloqueados
+    const powers = userProgress.completedMissions
+      .map(missionId => {
+        const mission = updatedMissions.find(m => m.id === missionId);
+        return mission ? `${mission.name} - ${mission.description}` : '';
+      })
+      .filter(Boolean);
     setUnlockedPowers(powers);
 
-  }, [userProgress.completedMissions]);
+  }, [userProgress.completedMissions]); // Solo depende de completedMissions
 
   const handleMissionClick = useCallback((missionId: string) => {
     const mission = missions.find(m => m.id === missionId);
@@ -178,8 +103,7 @@ const StarMap: React.FC<StarMapProps> = ({
     if (!mission) return;
     
     if (mission.isLocked) {
-      // Show locked message or play locked sound
-      console.log(`Mission ${mission.name} is locked`);
+      console.log(`Misión ${mission.name} está bloqueada`);
       return;
     }
 
@@ -193,7 +117,6 @@ const StarMap: React.FC<StarMapProps> = ({
 
   return (
     <div className="star-map">
-      {/* Starfield Background */}
       <div className="star-map__starfield">
         <div className="star-map__nebula star-map__nebula--purple"></div>
         <div className="star-map__nebula star-map__nebula--blue"></div>
@@ -212,7 +135,6 @@ const StarMap: React.FC<StarMapProps> = ({
         ))}
       </div>
 
-      {/* User Profile */}
       <UserProfile
         level={userProgress.level}
         userName="Cadete Cósmico"
@@ -220,20 +142,17 @@ const StarMap: React.FC<StarMapProps> = ({
         className="star-map__user-profile"
       />
 
-      {/* Mission Panel */}
       <MissionPanel
         activeMissions={activeMissions}
         unlockedPowers={unlockedPowers}
         className="star-map__mission-panel"
       />
 
-      {/* Connection Lines */}
       <ConnectionLines
         missions={missions}
         className="star-map__connections"
       />
 
-      {/* Planet Nodes */}
       <div className="star-map__nodes">
         {missions.map(mission => (
           <PlanetNode
@@ -249,14 +168,12 @@ const StarMap: React.FC<StarMapProps> = ({
         ))}
       </div>
 
-      {/* Navigation Bar */}
       <NavigationBar
         onNavigate={handleNavigation}
         activeSection="starmap"
         className="star-map__navigation"
       />
 
-      {/* Floating UI Elements */}
       <div className="star-map__floating-elements">
         <div className="star-map__cosmic-dust star-map__cosmic-dust--1"></div>
         <div className="star-map__cosmic-dust star-map__cosmic-dust--2"></div>
